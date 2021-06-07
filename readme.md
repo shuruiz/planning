@@ -1,3 +1,13 @@
+# Update (06.07.2021)
+
+Since the junction "sGK1" have 4-all-way-stop signs, it is not qualified for the current test environment. Instead, two other locations are picked. The basic criteria is that the ego vehicle makes a turn at the junction and the junction is not fully controlled by the stop sign. The following two figures show their geographical configurations:
+
+<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\8KfB\8KfB.png" alt="8KfB" style="zoom:30%;" />
+
+<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\lane_merge\lane_merge.png" alt="lane_merge" style="zoom:30%;" />
+
+Again, the scene index information is stored in \target_scene_index\location. In each sub folder, there are five files: location.png shows the global location where the scenes happened; 8KfB.png (or lane_merge.png) shows the configuration; example_scene.png shows one static plot where the trajectories of ego vehicle, agent vehicle and pedestrians can be found. scene_index(name).npy is the whole index list of the scenes; scene_index(name)_Pedestrian.npy is the scene index list containing the pedestrian label.
+
 # Pipeline of scenario filtering procedure
 
 ## 1. Objective
@@ -46,13 +56,7 @@
 
 
 
-# Update (06.07.2021)
 
-Since the junction "sGK1" have 4-all-way-stop signs, it is not qualified for the current test environment. Instead, two other locations are picked. The basic criteria is that the ego vehicle makes a turn at the junction and the junction is not fully controlled by the stop sign. The following two figures show their geographical configurations:
-
-<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\8KfB\8KfB.png" alt="8KfB" style="zoom:30%;" />
-
-<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\lane_merge\lane_merge.png" alt="lane_merge" style="zoom:30%;" />
 
 
 
