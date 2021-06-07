@@ -46,3 +46,13 @@
 
 
 
+# Update (06.07.2021)
+
+Since the junction "sGK1" have 4-all-way-stop signs, it is not qualified for the current test environment. Instead, two other locations are picked. The basic criteria is that the ego vehicle makes a turn at the junction and the junction is not fully controlled by the stop sign. The following two figures show their geographical configurations:
+
+<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\8KfB\8KfB.png" alt="8KfB" style="zoom:30%;" />
+
+<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\lane_merge\lane_merge.png" alt="lane_merge" style="zoom:30%;" />
+
+
+
