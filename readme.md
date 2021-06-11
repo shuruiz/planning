@@ -1,3 +1,9 @@
+# Update (06.10.2021)
+
+Extracted AV's state (translation, velocity, acceleration, yaw) and plotted them given target scene index. The following figure is one scene happened at the junction "8KfB", where there are pedestrians near by.
+
+<img src="D:\GitHub\Clone\planning\ruixuan\target_scene_index\8KfB\AV_state.png" alt="AV_state" style="zoom:50%;" />
+
 # Update (06.07.2021)
 
 Since the junction "sGK1" have 4-all-way-stop signs, it is not qualified for the current test environment. Instead, two other locations are picked. The basic criteria is that the ego vehicle makes a turn at the junction and the junction is not fully controlled by the stop sign. The following two figures show their geographical configurations:
