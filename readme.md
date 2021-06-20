@@ -1,4 +1,28 @@
+# Update (06.19.2021)
+
+Extracted agents' state (history translation, future translation, history yaw, future yaw) at 2 Hz and 5-second period for both history and future tags. The structure of stored data follows:
+
+​	Junction_name -> Scene -> Frame -> Label -> Track_id -> {history_translation, future_translation, history_yaw, future_yaw}
+
+Junction_name: 8KfB, lane_merge
+
+Scene: the scene indexes of the dataset
+
+Frame: the global frame indexes of the dataset, starting at the first frame of the scene and ending up with the last frame of the scene, at 5-frame step. Example: [100,118] ---> [100, 105, 110, 115, 118]
+
+Label: ['Not_Set', 'Unknown', 'Dont_Care', 'Car', 'Van', 'Tram', 'Bus', 'Truck', 'Emergency Vehicle', 'Other Vehicle', 'Bicycle', 'Motorcycle', 'Cyclist', 'Motorcyclist', 'Pedestrian', 'Animal', 'AV_Dont_Care']
+
+Track_id: the unique track_id of each agent. The track_ids are found at the current frame
+
+State: the history and future arrays are in the real-world sequence.
+
+Notation: The state corresponding to the current frame is the last element of history data;
+
+​			   At the two sides of a scene, the history or future data are filled with None.
+
 # Update (06.10.2021)
+
+
 
 Extracted AV's state (translation, velocity, acceleration, yaw) and plotted them given target scene index. The following figure is one scene happened at the junction "8KfB", where there are pedestrians near by.
 
