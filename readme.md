@@ -1,3 +1,11 @@
+# 06.28.2021
+
+Added the parse function in python file ".\planning\ruixuan\target_scene_index\utils.py"
+
+Checked the AV state (correct)
+
+Uploaded the vehicle trajectory to Google Drive ".\predictive planning\06.28.2021". Containing 10k+ trajectories.
+
 # Update (06.19.2021)
 
 Extracted agents' state (history translation, future translation, history yaw, future yaw) at 2 Hz and 5-second period for both history and future tags. The structure of stored data follows:
