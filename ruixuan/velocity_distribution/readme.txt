@@ -11,10 +11,11 @@ Fitting results: In file "KDE_fitting.pkl"
 
 Notation: In vehicle velocity distribution, vehicle type was not specified
           In pedestrian velocity distribution, velocity range of (0, 4) m/s is selected
-	  In vehicle velocity distribution, velocity range of (0, 35) m/s is selected
+	  In vehicle velocity distribution, velocity range of (1, 24) m/s is selected
 *****************************************
 
 Updata: 09.08.2021
 
 Notation: No correlation check
-	  KDE (kernel density estimation) was applied on a random selected subgroup of data
+	  KDE (kernel density estimation) was applied on a random selected subgroup of data: pedestrian 10k, vehicle 100k
+	  Bandwidth: pedestrain 0.074, vehicle 0.5
