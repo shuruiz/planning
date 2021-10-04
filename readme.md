@@ -1,3 +1,16 @@
+
+
+# 10.03.2021
+
+Download Lyft L5 Prediction Dataset: https://level-5.global/download/. You may need to register before you can download. The dataset we have been using is "Training dataset - Part 1/2" and "Training dataset - Part 2/2". Validation dataset is not used yet. Aerial Map and Semantic Map don't contain state information but are necessary for intersection extraction.
+
+<img src="C:\Users\zheng\AppData\Roaming\Typora\typora-user-images\image-20211003172250858.png" alt="image-20211003172250858" style="zoom:40%;" />
+
+This update is mainly focusing on fulfilling two functions, in <u>***Extraction for intersections and states.ipynb file***</u>: 
+
+* Extracting the global coordinates of target intersections from map
+* Extracting the states of three target types of agents at each time step (0.5 seconds per time step)
+
 # 06.28.2021
 
 Added the parse function in python file ".\planning\ruixuan\target_scene_index\utils.py"
