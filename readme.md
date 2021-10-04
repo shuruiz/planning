@@ -11,6 +11,8 @@ This update is mainly focusing on fulfilling two functions, in <u>***Extraction 
 * Extracting the global coordinates of target intersections from map
 * Extracting the states of three target types of agents at each time step (0.5 seconds per time step)
 
+Besides the ipynb file, two lists that contain the target scenes will be used. These two scene lists will be updated later (with more elements).
+
 # 06.28.2021
 
 Added the parse function in python file ".\planning\ruixuan\target_scene_index\utils.py"
