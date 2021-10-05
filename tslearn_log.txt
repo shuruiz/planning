@@ -1,0 +1,218 @@
+(119353, 10, 4)
+runing number of clusters: 6
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  3692.25870347023 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  2605.7629005908966 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  3352.6860675811768 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  3802.404173851013 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  3754.079227209091 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  3428.1831080913544 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  2880.4732241630554 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  2048.8464415073395 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  2437.531051158905 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  2002.9600150585175 seconds ---
+runing number of clusters: 7
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  4138.830673456192 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  3851.762463569641 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  4299.186988115311 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  3972.7289621829987 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  3630.363177537918 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  4303.212583780289 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  2673.728934288025 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  2846.9091279506683 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  2704.3611438274384 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  2982.0979673862457 seconds ---
+runing number of clusters: 8
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  3742.448905944824 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  2552.747812271118 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  2551.2710173130035 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  2460.0912659168243 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  3712.3528158664703 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  3072.6306319236755 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  2470.856504201889 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  2885.849372148514 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  2460.1934337615967 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  2479.27788233757 seconds ---
+runing number of clusters: 9
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  4474.531084060669 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  4475.803584575653 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  2431.4405031204224 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  2706.987448453903 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  2605.031984090805 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  3074.243019104004 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  2809.4418931007385 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  5418.992624044418 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  2981.350805044174 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  2116.4487841129303 seconds ---
+runing number of clusters: 10
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  4491.3791847229 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  5895.366468667984 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  5774.614009857178 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  5770.323237419128 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  4284.268723487854 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  3351.5053420066833 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  3814.5409576892853 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  4011.296179294586 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  3295.0673553943634 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  3434.049291372299 seconds ---
+runing number of clusters: 11
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  6554.616175174713 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  2778.9073600769043 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  6550.22642493248 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  6613.086447238922 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  6734.643465518951 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  6552.805499792099 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  6594.2853310108185 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  5348.386910200119 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  6542.020486831665 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  3315.5045986175537 seconds ---
+runing number of clusters: 12
+running re-initialization: 0 out of 10
+start training clustering on 4 cpus
+---used  7066.240655899048 seconds ---
+running re-initialization: 1 out of 10
+start training clustering on 4 cpus
+---used  7139.395081758499 seconds ---
+running re-initialization: 2 out of 10
+start training clustering on 4 cpus
+---used  7532.651996135712 seconds ---
+running re-initialization: 3 out of 10
+start training clustering on 4 cpus
+---used  7012.816579818726 seconds ---
+running re-initialization: 4 out of 10
+start training clustering on 4 cpus
+---used  7483.322634458542 seconds ---
+running re-initialization: 5 out of 10
+start training clustering on 4 cpus
+---used  7082.415305376053 seconds ---
+running re-initialization: 6 out of 10
+start training clustering on 4 cpus
+---used  7019.466827630997 seconds ---
+running re-initialization: 7 out of 10
+start training clustering on 4 cpus
+---used  7302.932453393936 seconds ---
+running re-initialization: 8 out of 10
+start training clustering on 4 cpus
+---used  3616.435611009598 seconds ---
+running re-initialization: 9 out of 10
+start training clustering on 4 cpus
+---used  3171.013313293457 seconds ---
