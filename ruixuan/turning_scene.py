@@ -23,8 +23,8 @@ from IPython.display import display, clear_output
 import PIL
 
 
-import matlab
-import matlab.engine
+# import matlab
+# import matlab.engine
 
 
 from shapely.geometry import Point
@@ -38,8 +38,8 @@ class Scene(object):
         self.scene_num = len(self.dataset.scenes)
         self.yaw_th = 1.25
         self.distance_th = 10
-        self.eng = matlab.engine.start_matlab()
-        self.eng.cd(r'D:\\GitHub\\Clone\\planning\\ruixuan\\utils') 
+        # self.eng = matlab.engine.start_matlab()
+        # self.eng.cd(r'D:\\GitHub\\Clone\\planning\\ruixuan\\utils') 
         self.turning_scenes = []
         self.turning_yaw_diff = {}
         self.tunring_frames = []
@@ -199,36 +199,36 @@ class Scene(object):
 
     
             
-    def scene_turning_frames(self, scene_idx):
+    # def scene_turning_frames(self, scene_idx):
         
-        frames = list(range(self.dataset.scenes[scene_idx]["frame_index_interval"][0],self.dataset.scenes[scene_idx]["frame_index_interval"][1]))
-        yaw = [rotation33_as_yaw(rotation) for rotation in self.dataset.frames['ego_rotation'][frames]]
+    #     frames = list(range(self.dataset.scenes[scene_idx]["frame_index_interval"][0],self.dataset.scenes[scene_idx]["frame_index_interval"][1]))
+    #     yaw = [rotation33_as_yaw(rotation) for rotation in self.dataset.frames['ego_rotation'][frames]]
         
-        # extract key info from MATLAB results
-        output_yaw = self.eng.mat2py(matlab.double(yaw), nargout=2)
+    #     # extract key info from MATLAB results
+    #     output_yaw = self.eng.mat2py(matlab.double(yaw), nargout=2)
 
-        chgpt_dist_yaw = np.array(output_yaw[0])[0]
-        chgpt_num_dist_yaw = np.array(output_yaw[1]).flatten()
+    #     chgpt_dist_yaw = np.array(output_yaw[0])[0]
+    #     chgpt_num_dist_yaw = np.array(output_yaw[1]).flatten()
 
-        chgpt_num = np.argmax(chgpt_num_dist_yaw)
+    #     chgpt_num = np.argmax(chgpt_num_dist_yaw)
         
         
-        if chgpt_num != 2:
-            self.error_filtered_scene.append(scene_idx)
+    #     if chgpt_num != 2:
+    #         self.error_filtered_scene.append(scene_idx)
             
-            return []
+    #         return []
             
             
-        else:
-            chgpt_index = np.argpartition(chgpt_dist_yaw, -chgpt_num)[-chgpt_num:]
-            chgpt_index.sort()
+    #     else:
+    #         chgpt_index = np.argpartition(chgpt_dist_yaw, -chgpt_num)[-chgpt_num:]
+    #         chgpt_index.sort()
 
-            chgpt_loc = self.chgpt_index_find(chgpt_index, chgpt_dist_yaw, chgpt_num)
+    #         chgpt_loc = self.chgpt_index_find(chgpt_index, chgpt_dist_yaw, chgpt_num)
 
-            self.turning_yaw_diff[scene_idx] = yaw[chgpt_loc[0]] - yaw[chgpt_loc[1]]
+    #         self.turning_yaw_diff[scene_idx] = yaw[chgpt_loc[0]] - yaw[chgpt_loc[1]]
 
 
-            return list(range(chgpt_loc[0]+frames[0],chgpt_loc[1]+frames[0],3))
+    #         return list(range(chgpt_loc[0]+frames[0],chgpt_loc[1]+frames[0],3))
     
     
     
