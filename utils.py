@@ -145,4 +145,23 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         sampling_result[n_scene] = scene_data
         n_scene+=1
     return sampling_result
+
+def extract_feature(ele):
+    """
+    extract feature for a single trajectory
+    f = [x, y, a,v, delta_a, delta_v]
+    """
+    fe=[]
+    for i in range(3, len(ele)):
+        prev3, prev2, prev, curr = ele[i-3], ele[i-2], ele[i-1], ele[i]
+        v = np.linalg.norm(curr - prev)/0.5
+        v_prev = np.linalg.norm(prev - prev2)/0.5
+        v_prev2 = np.linalg.norm(prev2 - prev3)/0.5
+        a = (v-v_prev)/0.5
+        a_prev = (v_prev-v_prev2)/0.5
         
+        energy = v**2-v_prev**2
+        force = a-a_prev
+        f = [ele[i][0], ele[i][1], v, a, energy, force]
+        fe.append(f)
+    return np.array(fe)
