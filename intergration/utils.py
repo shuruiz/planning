@@ -23,6 +23,7 @@ def crop(array, max_n_agent=10, is_cyc=False):
 # utility functions
 def get_distance(a,b):
     return np.linalg.norm(a - b, axis=1)
+
 def get_socially_acceptable(veh):
     """
     greedy algorithm
@@ -165,3 +166,6 @@ def extract_feature(ele):
         f = [ele[i][0], ele[i][1], v, a, energy, force]
         fe.append(f)
     return np.array(fe)
+
+def get_smoothness(traj):
+    pass
