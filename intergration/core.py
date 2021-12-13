@@ -123,7 +123,7 @@ class Node():
 
 class Graph():
 	"""
-	construct a graph
+	construct a graph representing env
 	a scene, prediction models, and lane_boundary are needed to initialize
 	"""
 	def __init__(self, models, lane_boundary):
@@ -254,7 +254,7 @@ class Graph():
 				c_edge.append(0)
 
 		edge = v_edge + p_edge + c_edge
-		return subject, veh, ped, cyc, np.array(edge)
+		return [subject, veh, ped, cyc, np.array(edge)]
 
 
 	
@@ -275,19 +275,20 @@ class Graph():
 	def step(self, action, policy):
 		"""
 		update graph, move to next state
-		action space [-3, 3] * [0,180] => 60*180 action space
+		action space [-3, 3] * [0,180] => 60*180 action space  # a, theta are delta
 		"""
 		acc, theta = self.action_dict[action]
-		distance = self.target.v*0.5+0.5*acc*0.25
-		radian = theta*math.pi/180
+		self.target.a = self.target.a+acc
+		self.target.theta=self.target.theta+theta
+
+		distance = self.target.v*0.5+0.5*self.target.a*0.25
+		radian = self.target.theta*math.pi/180
 		dx, dy = distance*math.cos(radian), distance*math.sin(radian)
 		
 		#update state
 		self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]+dy]
-		self.target.v = self.target.v+acc*0.5
-		self.target.a = acc
-		self.target.theta=theta
-		self.target.t +=1
+		self.target.v = self.target.v+self.target.a*0.5
+		self.target.t +=1 # plan step move forward
 
 		self.target.history.append([self.target.t, self.target.pos, self.target.a, self.target.theta])
 		# update the state
@@ -297,28 +298,22 @@ class Graph():
 		
 		# compute reward
 		# stop crateria: #step longer than 5 seconds, reached goal, crash with other agents
-		if  distance_to_goal<1:
+		state_next = self.wrap_nn_input()
+		reward, info = self._get_reward()
+
+		if  info == 'reach_goal' or info =='time_out' or info== 'crash'
 			# update reward
-			pass
-		
-		elif self.t>10:
-			# update reward
-			 #return 'done'
-			pass
-		elif is_crash():  
-			# this can be moved to update edge part by giving a huge loss, is the loss pass the threshold then done
-			# update reward
-			pass
+			return state_next, reward, True, info
 		else:
 			# update reward
-			pass
+			return state_next, reward, False, info
 		
 	
 	def _get_reward(self):
 		"""
 		compute cost of the current state, A*sum_t sum_edge c_pi +B*c_goal +C* c_smoothness
 		"""
-
+		# distance_to_goal<3, self.t>=10, is_crash, info 
 		pass
 
 	def reset(self):
