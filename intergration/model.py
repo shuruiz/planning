@@ -8,9 +8,11 @@ from keras.layers import GRU
 from keras.callbacks import ModelCheckpoint,EarlyStopping
 import tensorflow as tf
 
+# add pooling
+
 def _build_model(n_actions):
-    model_sub_in = Input(shape=(1, 7))
-    # goalx,goaly, posx, posy, v, a, theta
+    model_sub_in = Input(shape=(1, 9))
+    # start x ,start y, goalx,goaly, posx, posy, v, a, theta
     model_sub_flatten = Flatten()(model_sub_in)
     model_sub_mid = Dense(128, activation='relu', name='layer_sub_mid')(model_sub_flatten)
     model_sub_out = Dense(256, activation='elu', name='layer_sub_out')(model_sub_mid)

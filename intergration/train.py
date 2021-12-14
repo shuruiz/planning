@@ -25,7 +25,7 @@ max_steps_per_episode = 10000
 # env.seed(seed)
 env=Graph()
 
-num_actions = 4320
+num_actions = 3600
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
@@ -63,7 +63,7 @@ loss_function = keras.losses.Huber()
 
 while True:  # Run until solved
     # state = np.array(env.reset())
-    subject, veh, ped, cyc, edge  = env.reset()
+    s = env.reset()
     episode_reward = 0
 
     for timestep in range(1, max_steps_per_episode):
@@ -78,7 +78,8 @@ while True:  # Run until solved
         else:
             # Predict action Q-values
             # From environment state
-            state_tensor = tf.convert_to_tensor(state)
+            state_tensor = tf.convert_to_tensor(state) # multiple 
+            
             state_tensor = tf.expand_dims(state_tensor, 0)
             action_probs = model(state_tensor, training=False)
             # Take best action
