@@ -101,7 +101,7 @@ class TargetNode():
 	def _get_theta(self, prev,curr):
 		try:
 			tan = (curr[1]-prev[1])/(curr[0]-prev[0])
-			return round(math.atan(tan),3)
+			return round(math.atan(tan), 0)
 		except:
 			return 90
 
@@ -158,7 +158,7 @@ class Graph():
 		# self.riskmodel=models[3]
 		self.lane_boundary=lane_boundary
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-3,3,0.1), decimals=1), np.round(np.arange(-90,90,3), decimals=1))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-3,3,0.1), decimals=1), np.round(np.arange(-90,90,3), decimals=0))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 		# self._build_graph_()
@@ -167,7 +167,7 @@ class Graph():
 		subject = self.sample['veh'][0]
 		self.target= TargetNode(subject)
 		# print('build target node')
-		print('goal', self.target.goal)
+		print('task', self.target.task)
 		self.env_veh=[]
 		self.env_ped=[]
 		self.env_cyc=[]
@@ -317,7 +317,7 @@ class Graph():
 		action space [-3, 3] * [0,180] => 60*180 action space  # a, theta are delta
 		"""
 		acc, theta = self.action_dict[action]
-		# print("acc theta", acc, theta)
+		print("acc theta", acc, theta)
 		self.target.a = self.target.a+acc
 		self.target.theta=self.target.theta+theta
 
@@ -331,7 +331,7 @@ class Graph():
 		self.target.t +=1 # plan step move forward
 
 
-		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], self.target.a, self.target.theta])
+		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], round(self.target.a,1), round(self.target.theta, 0)])
 
 		# update the state
 		self._sort_env()
@@ -361,13 +361,13 @@ class Graph():
 		# edge weights
 		c_e = 0.01*np.sum(self.nn_edge)
 		c_d = 0.8*distance_to_goal
-		c_j  = 0.1 *compute_jerkness(self.target)
+		c_j  = compute_jerkness(self.target)
 		print(c_e, c_d, c_j)
 		r = -(c_e+c_d+c_j)
 		# t
 		if self.is_crash():
 			return -99999, 'crash' 
-		elif distance_to_goal<=3:
+		elif distance_to_goal<=1:
 			return r, 'reach_goal'
 		elif self.target.t>=10:
 			return r, 'time_out'
@@ -385,6 +385,12 @@ class Graph():
 if __name__ =='__main__':
 	env = Graph()
 	s = env.reset()
+	print("======")
 	s_, r, done, info = env.step(2)
 	print(r, done, info)
-	s = env.reset()
+	print("======")
+	s_, r, done, info = env.step(20)
+	print(r, done, info)
+	print("======")
+	s_, r, done, info = env.step(60)
+	print(r, done, info)
