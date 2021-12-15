@@ -21,10 +21,13 @@ def compute_vweight(target, veh):
 	# here only one pos, not all future positions
 	try:
 		d =get_distance_pt(target.pos, veh.get_pos(target.t))
+		
+		w = math.exp(-0.01* d)
+
 	except:
 		print("raise expection compute_vweight")
 		return math.exp(veh.risk)
-	return math.exp(veh.risk)*d
+	return math.exp(veh.risk)*w
 	
 def compute_pcweight(target, pc):
 	"""
@@ -34,10 +37,12 @@ def compute_pcweight(target, pc):
 		# print('pcw', target.pos)
 		# print(pc.get_pos(target.t))
 		d =get_distance_pt(target.pos, pc.get_pos(target.t))
+		w = math.exp(-0.01* d)
+
 	except:
 		print("raise expection compute_pcweight")
 		return 1
-	return d
+	return w
 
 def compute_jerkness(target):
 	"""
@@ -96,12 +101,16 @@ class TargetNode():
 		v10 = np.linalg.norm(curr - prev)/0.5
 		v9 = np.linalg.norm(prev - prev2)/0.5
 		a = (v10-v9)/0.5
-		return round(a, 1), round(v10, 3)
+		return a, v10
 	
 	def _get_theta(self, prev,curr):
 		try:
-			tan = (curr[1]-prev[1])/(curr[0]-prev[0])
-			return round(math.atan(tan), 0)
+			diff = curr[0]-prev[0] 
+			if diff !=0:
+				tan = (curr[1]-prev[1])/diff
+				return math.atan(tan)
+			else:
+				return 90
 		except:
 			return 90
 
@@ -140,7 +149,7 @@ class Node():
 		self.projected=np.vstack((self.traj, self.pred))
 	def get_pos(self,t):
 		# temp = np.vstack((self.traj, self.pred))
-		return self.projected[t+10,:]
+		return self.projected[t+9,:]
 
 
 class Graph():
@@ -167,7 +176,7 @@ class Graph():
 		subject = self.sample['veh'][0]
 		self.target= TargetNode(subject)
 		# print('build target node')
-		print('task', self.target.task)
+		# print('task', self.target.task)
 		self.env_veh=[]
 		self.env_ped=[]
 		self.env_cyc=[]
@@ -292,7 +301,7 @@ class Graph():
 		veh = np.array(veh)
 		ped = np.array(ped)
 		cyc = np.array(cyc)
-		print("history", self.target.history)
+		# print("history", self.target.history)
 		return [subject, veh, ped, cyc, self.nn_edge]
 
 
@@ -317,7 +326,7 @@ class Graph():
 		action space [-3, 3] * [0,180] => 60*180 action space  # a, theta are delta
 		"""
 		acc, theta = self.action_dict[action]
-		print("acc theta", acc, theta)
+		# print("acc theta", acc, theta)
 		self.target.a = self.target.a+acc
 		self.target.theta=self.target.theta+theta
 
@@ -326,12 +335,12 @@ class Graph():
 		dx, dy = distance*math.cos(radian), distance*math.sin(radian)
 		
 		#update state
-		self.target.pos =[round(self.target.pos[0]+dx, 3), round(self.target.pos[1]+dy, 3)]
+		self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]+dy]
 		self.target.v = self.target.v+self.target.a*0.5
 		self.target.t +=1 # plan step move forward
 
 
-		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], round(self.target.a,1), round(self.target.theta, 0)])
+		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], self.target.a, self.target.theta])
 
 		# update the state
 		self._sort_env()
@@ -343,7 +352,7 @@ class Graph():
 		state_next = self.wrap_nn_input()
 		reward, info = self._get_reward()
 
-		if  info == 'reach_goal' or info =='time_out' or info== 'crash':
+		if  info == 'reach_goal' or info== 'crash':
 			# update reward
 			return state_next, reward, True, info
 		else:
@@ -359,11 +368,11 @@ class Graph():
 		# print("get reward",self.target.start, self.target.goal, self.target.t, self.target.pos)
 		distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
 		# edge weights
-		c_e = 0.01*np.sum(self.nn_edge)
+		c_e = 0.1*np.sum(self.nn_edge)
 		c_d = 0.8*distance_to_goal
-		c_j  = compute_jerkness(self.target)
-		print(c_e, c_d, c_j)
-		r = -(c_e+c_d+c_j)
+		c_j  = 0.1*compute_jerkness(self.target)
+		# print(c_e, c_d, c_j)
+		r = c_e-c_d-c_j
 		# t
 		if self.is_crash():
 			return -99999, 'crash' 

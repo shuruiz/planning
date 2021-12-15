@@ -23,7 +23,7 @@ def _build_model(n_actions):
     model_veh_d = Dense(1,  activation='relu', name='layer_veh_dx')(model_veh_in)
     veh_reshape = Reshape((-1,10))(model_veh_d)
     model_veh_lstm = LSTM(256)(veh_reshape)
-    veh_reshape2 = Reshape((3,8,8))(model_veh_lstm)
+    veh_reshape2 = Reshape((4,8,8))(model_veh_lstm)
     
     model_veh_conv1 = Conv2D(128,(2,2),  activation='relu', name='layer_veh_conv1')(veh_reshape2)
     model_veh_conv2 = Conv2D(256,(2,2),  activation='relu', name='layer_veh_conv2')(model_veh_conv1)
@@ -36,7 +36,7 @@ def _build_model(n_actions):
     model_ped_d= Dense(1,  activation='relu', name='layer_ped_dx')(model_ped_in)
     ped_reshape = Reshape((-1,10))(model_ped_d)
     model_ped_lstm = LSTM(256)(ped_reshape)
-    ped_reshape2 = Reshape((3,8,8))(model_ped_lstm)
+    ped_reshape2 = Reshape((4,8,8))(model_ped_lstm)
     
     model_ped_conv1 = Conv2D(128,(2,2),  activation='relu', name='layer_ped_conv1')(ped_reshape2)
     model_ped_conv2 = Conv2D(256,(2,2),  activation='relu', name='layer_ped_conv2')(model_ped_conv1)
@@ -50,7 +50,7 @@ def _build_model(n_actions):
     model_cyc_d= Dense(1,  activation='relu', name='layer_cyc_dx')(model_cyc_in)
     cyc_reshape = Reshape((-1,10))(model_cyc_d)
     model_cyc_lstm = LSTM(256)(cyc_reshape)
-    cyc_reshape2 = Reshape((3,8,8))(model_cyc_lstm)
+    cyc_reshape2 = Reshape((4,8,8))(model_cyc_lstm)
     
     model_cyc_conv1 = Conv2D(128,(2,2),  activation='relu', name='layer_cyc_conv1')(cyc_reshape2)
     model_cyc_conv2 = Conv2D(128,(2,2),  activation='relu', name='layer_cyc_conv2')(model_cyc_conv1)
@@ -83,3 +83,7 @@ def _build_model(n_actions):
     
     merged_model = Model([model_sub_in, model_veh_in,model_ped_in,model_cyc_in,model_edge_in], out)
     return merged_model
+
+if __name__ =='__main__':
+    model = _build_model(3600)
+    model.summary()

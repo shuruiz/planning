@@ -16,7 +16,7 @@ epsilon_interval = (
     epsilon_max - epsilon_min
 )  # Rate at which to reduce chance of random action being taken
 batch_size = 32  # Size of batch taken from replay buffer
-max_steps_per_episode = 10000
+max_steps_per_episode = 10
 
 # # Use the Baseline Atari environment because of Deepmind helper functions
 # env = make_atari("BreakoutNoFrameskip-v4")
@@ -47,23 +47,24 @@ episode_reward_history = []
 running_reward = 0
 episode_count = 0
 frame_count = 0
-# Number of frames to take random action and observe output
+# Number of frames to take random action and observe output, warm-up
 epsilon_random_frames = 50000
 # Number of frames for exploration
 epsilon_greedy_frames = 1000000.0
 # Maximum replay length
 # Note: The Deepmind paper suggests 1000000 however this causes memory issues
 max_memory_length = 100000
-# Train the model after 4 actions
-update_after_actions = 4
+# Train the model after 1 actions
+update_after_actions = 1
 # How often to update the target network
 update_target_network = 10000
 # Using huber loss for stability
 loss_function = keras.losses.Huber()
 
-while True:  # Run until solved
+while episode_count<20000:  # Run until solved
     # state = np.array(env.reset())
-    s = env.reset()
+    state = env.reset()
+    # print('==== episode====:', episode_count)
     episode_reward = 0
 
     for timestep in range(1, max_steps_per_episode):
@@ -78,9 +79,15 @@ while True:  # Run until solved
         else:
             # Predict action Q-values
             # From environment state
-            state_tensor = tf.convert_to_tensor(state) # multiple 
-            
-            state_tensor = tf.expand_dims(state_tensor, 0)
+            # subject, veh, ped, cyc, edge
+            subject_tensor = tf.convert_to_tensor(state[0])
+            veh_tensor = tf.convert_to_tensor(state[1])  
+            ped_tensor = tf.convert_to_tensor(state[2])  
+            cyc_tensor = tf.convert_to_tensor(state[3])  
+            edge_tensor = tf.convert_to_tensor(state[4])    
+
+            # state_tensor = tf.expand_dims(state_tensor, 0)
+            state_tensor = [subject_tensor, veh_tensor, ped_tensor, cyc_tensor, edge_tensor]
             action_probs = model(state_tensor, training=False)
             # Take best action
             action = tf.argmax(action_probs[0]).numpy()
@@ -91,9 +98,10 @@ while True:  # Run until solved
 
         # Apply the sampled action in our environment
         state_next, reward, done, _ = env.step(action)
-        state_next = np.array(state_next)
+        # state_next = np.array(state_next)
 
         episode_reward += reward
+        # print(episode_reward)
 
         # Save actions and states in replay buffer
         action_history.append(action)
@@ -110,8 +118,41 @@ while True:  # Run until solved
             indices = np.random.choice(range(len(done_history)), size=batch_size)
 
             # Using list comprehension to sample from replay buffer
-            state_sample = np.array([state_history[i] for i in indices])
-            state_next_sample = np.array([state_next_history[i] for i in indices])
+            subject_sample, veh_sample, ped_sample, cyc_sample, edge_sample =[],[],[],[],[]
+            for i in indices:
+            	shi = state_history[i]
+            	subject_sample.append(shi[0])
+            	veh_sample.append(shi[1])
+            	ped_sample.append(shi[2])
+            	cyc_sample.append(shi[3])
+            	edge_sample.append(shi[4])
+            subject_sample=np.array(subject_sample)
+            veh_sample = np.array(veh_sample)
+            ped_sample = np.array(ped_sample)
+            cyc_sample = np.array(cyc_sample)
+            edge_sample = np.array(edge_sample)
+            state_sample = [subject_sample, veh_sample, ped_sample, cyc_sample, edge_sample]
+
+            subject_next_sample, veh_next_sample, ped_next_sample, cyc_next_sample, edge_next_sample =[],[],[],[],[]
+            for i in indices:
+            	shi = state_next_history[i]
+            	subject_next_sample.append(shi[0])
+            	veh_next_sample.append(shi[1])
+            	ped_next_sample.append(shi[2])
+            	cyc_next_sample.append(shi[3])
+            	edge_next_sample.append(shi[4])
+            subject_next_sample=np.array(subject_next_sample)
+            veh_next_sample = np.array(veh_next_sample)
+            ped_next_sample = np.array(ped_next_sample)
+            cyc_next_sample = np.array(cyc_next_sample)
+            edge_next_sample = np.array(edge_next_sample)
+            state_next_sample = [subject_next_sample, veh_next_sample, ped_next_sample, cyc_next_sample, edge_next_sample]
+
+            # for ele in state_sample:
+            # 	print(ele.shape, 'ele')
+            # for x in state_next_sample:
+            # 	print(x.shape, 'x')
+            # state_next_sample = [state_next_history[i] for i in indices]
             rewards_sample = [rewards_history[i] for i in indices]
             action_sample = [action_history[i] for i in indices]
             done_sample = tf.convert_to_tensor(
@@ -120,14 +161,14 @@ while True:  # Run until solved
 
             # Build the updated Q-values for the sampled future states
             # Use the target model for stability
-            future_rewards = model_target.predict(state_next_sample)
+            future_rewards = model_target.predict(state_next_sample) # get q value 
             # Q value = reward + discount factor * expected future reward
             updated_q_values = rewards_sample + gamma * tf.reduce_max(
                 future_rewards, axis=1
             )
 
             # If final frame set the last value to -1
-            updated_q_values = updated_q_values * (1 - done_sample) - done_sample
+            updated_q_values = updated_q_values * (1 - done_sample) - done_sample  # to be updated 
 
             # Create a mask so we only calculate loss on the updated Q-values
             masks = tf.one_hot(action_sample, num_actions)
@@ -170,6 +211,10 @@ while True:  # Run until solved
     running_reward = np.mean(episode_reward_history)
 
     episode_count += 1
+    if episode_count%100 ==0:
+    	print("episode %d running reward %f" %(episode_count, running_reward))
+    if episode_count%10000==0:
+    	np.save('episode_history', episode_reward_history)
 
     if running_reward > 40:  # Condition to consider the task solved
         print("Solved at episode {}!".format(episode_count))
