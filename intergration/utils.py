@@ -21,8 +21,17 @@ def crop(array, max_n_agent=10, is_cyc=False):
         return array
     
 # utility functions
-def get_distance(a,b):
-    return np.linalg.norm(a - b, axis=1)
+def get_distance(v1,v2):
+    """
+    get distance between points in v1 and v2
+    """
+    return np.linalg.norm(v1 - v2, axis=1)
+
+def get_distance_pt(p1, p2):
+    """
+    get l2 distance between two point
+    """
+    return np.linalg.norm(p1 - p2)
 
 def get_socially_acceptable(veh):
     """
@@ -140,9 +149,9 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         
         if len(veh)==0 or len(ped)==0 or len(cyc)==0:
             continue
-        scene_data['ped']=ped
-        scene_data['cyc']=cyc
-        scene_data['veh']=veh
+        scene_data['ped']=np.round(ped, decimals=3)
+        scene_data['cyc']=np.round(cyc, decimals=3)
+        scene_data['veh']=np.round(veh,decimals=3)
         sampling_result[n_scene] = scene_data
         n_scene+=1
     return sampling_result
