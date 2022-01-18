@@ -33,6 +33,17 @@ def get_distance_pt(p1, p2):
     """
     return np.linalg.norm(p1 - p2)
 
+
+def percent_left(node):
+    """
+    get l2 distance between two point
+    """
+    all_dist = get_distance_pt(node.start, node.goal)
+    dist_left = get_distance_pt(node.pos, node.goal)
+    if all_dist==0:
+        return 0
+    return 100* dist_left / all_dist
+
 def get_socially_acceptable(veh):
     """
     greedy algorithm
@@ -101,7 +112,7 @@ def MCMC_sampling(final_veh, final_ped, final_cyc, max_n_veh=8, max_n_ped=5, max
 def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
                    poolv, poolp, poolc,\
                    veh_model, ped_model, cyc_model, \
-                   max_n_veh=10, max_n_ped=5, max_n_cyc=5):
+                   max_n_veh=10, max_n_ped=5, max_n_cyc=5, tasks=None):
     sampling_result={}
     
     # initialization
@@ -144,7 +155,11 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         veh =veh_under_category[np.random.choice(veh_under_category.shape[0], max_n_veh, replace=False)]
         
         
-        
+        if tasks is not None:
+            task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])
+            task = np.expand_dims(task, axis=0)
+            veh = np.vstack((task, veh))
+
         veh, ped, cyc = socially_acceptance_check(veh, ped, cyc)
         
         if len(veh)==0 or len(ped)==0 or len(cyc)==0:

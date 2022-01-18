@@ -8,11 +8,13 @@ from collections import deque
 import numpy as np
 from sklearn.mixture import BayesianGaussianMixture
 from tabulate import tabulate
-from utils import Gibbs_sampling, get_smoothness, get_distance_pt
+from utils import Gibbs_sampling, get_smoothness, get_distance_pt, percent_left
 from config import Config
 from visualizer import plot_scene_on_grid
 import itertools
+from Trajectory import check_collision
 
+collision = check_collision()
 
 def compute_vweight(target, veh):
 	"""
@@ -22,7 +24,7 @@ def compute_vweight(target, veh):
 	try:
 		d =get_distance_pt(target.pos, veh.get_pos(target.t))
 		
-		w = math.exp(-0.01* d)
+		w = math.exp(-0.01* d) # the further, the lower the stress
 
 	except:
 		print("raise expection compute_vweight")
@@ -54,27 +56,51 @@ def compute_jerkness(target):
 		jerk+= abs((history_a[i]-history_a[i-1])/0.5)
 	return jerk/(len(history_a)-1)
 
+def node_sort(s, nodes):
+	sort_index = np.argsort(s)
+	results=[]
+	for ele in sort_index:
+		results.append(nodes[ele])
+	return results
+
+# def check_lane(node, collision):
+# 	return collision.check(node.pos, [node.history[-2][1], node.history[-2][2]])
 
 class SceneGenerator():
 	"""
 	generate a scene
 	"""
 	def __init__(self):
-		self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
-		self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
-		self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
+		# self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
+		# self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
+		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
 
-		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
-		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
-		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
+		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
+		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
+		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
 
-		self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
-		self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
-		self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+		# self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
+		# self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
+		# self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+
+		self.pxy= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxy_partial.pickle",'rb'))
+		self.pxz= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxz_partial.pickle",'rb'))
+		self.pyzx= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pyzx_partial.pickle",'rb'))
+
+		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_model_partial.pickle",'rb'))
+		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_model_partial.pickle",'rb'))
+		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_model_partial.pickle",'rb'))
+
+		self.poolv = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_pool_partial.pickle",'rb'))
+		self.poolp = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_pool_partial.pickle",'rb'))
+		self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
+
+
+		self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
 	def generate(self):
 		sampling_res = Gibbs_sampling(max_scene=1, Pxy=self.pxy, Pxz=self.pxz, Pyzx=self.pyzx, poolv=self.poolv, poolp=self.poolp, poolc=self.poolc,\
 							 veh_model = self.veh_gmm, ped_model=self.ped_gmm, cyc_model=self.cyc_gmm,\
-							 max_n_veh=10, max_n_ped=5,max_n_cyc=5)
+							 max_n_veh=10, max_n_ped=5,max_n_cyc=5, tasks=self.tasks)
 		return sampling_res[0]
 
 
@@ -147,6 +173,7 @@ class Node():
 			self.risk=-1
 
 		self.projected=np.vstack((self.traj, self.pred))
+
 	def get_pos(self,t):
 		# temp = np.vstack((self.traj, self.pred))
 		return self.projected[t+9,:]
@@ -157,7 +184,7 @@ class Graph():
 	construct a graph representing env
 	a scene, prediction models, and lane_boundary are needed to initialize
 	"""
-	def __init__(self, lane_boundary=[]):
+	def __init__(self):
 		self.gen_scene=SceneGenerator()
 		self.sample=self.gen_scene.generate()
 		self.graph={}
@@ -165,12 +192,16 @@ class Graph():
 		# self.pmodel=models[1]
 		# self.cmodel=models[2]
 		# self.riskmodel=models[3]
-		self.lane_boundary=lane_boundary
+		# self.lane_boundary=lane_boundary
+
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-3,3,0.1), decimals=1), np.round(np.arange(-90,90,3), decimals=0))) # delta a, delta theta
+		
+		self.action_dict = list(itertools.product(np.round(np.arange(-3,3,0.1), decimals=1), np.round(np.arange(-2,2,0.5), decimals=1))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
+
 		# self._build_graph_()
+
 		
 	def _build_graph_(self):
 		subject = self.sample['veh'][0]
@@ -216,19 +247,22 @@ class Graph():
 		for veh in self.env_veh:
 			d = get_distance_pt(self.target.pos, veh.get_pos(self.target.t))
 			v_distance_key.append(d)
-		self.env_veh=[x for _, x in sorted(zip(v_distance_key, self.env_veh))]
+		# self.env_veh=[x for _, x in sorted(zip(v_distance_key, self.env_veh))]
+		self.env_veh=node_sort(v_distance_key, self.env_veh)
 
 		p_distance_key=[]
 		for ped in self.env_ped:
 			d=get_distance_pt(self.target.pos, ped.get_pos(self.target.t))
 			p_distance_key.append(d)
-		self.env_ped=[x for _, x in sorted(zip(p_distance_key, self.env_ped))]
+		# self.env_ped=[x for _, x in sorted(zip(p_distance_key, self.env_ped))]
+		self.env_ped = node_sort(p_distance_key, self.env_ped)
 
 		c_distance_key=[]
 		for cyc in self.env_cyc:
 			d=get_distance_pt(self.target.pos, cyc.get_pos(self.target.t))
 			c_distance_key.append(d)
-		self.env_cyc=[x for _, x in sorted(zip(c_distance_key, self.env_cyc))]
+		# self.env_cyc=[x for _, x in sorted(zip(c_distance_key, self.env_cyc))]
+		self.env_cyc = node_sort(c_distance_key, self.env_cyc)
 
 
 	def _update_edges(self):
@@ -312,13 +346,14 @@ class Graph():
 	# 	# return action
 	# 	self._sort_env()
 	# 	self._update_edges()
-		
+
+
 	
-	def is_crash(self):
-		"""
-		check if crash happens when graph is updated, or hit lane_boundary inside intersection
-		"""
-		return False
+	# def is_crash(self):
+	# 	"""
+	# 	check if crash happens when graph is updated, or hit lane_boundary inside intersection
+	# 	"""
+	# 	return False
 
 	def step(self, action):
 		"""
@@ -366,18 +401,21 @@ class Graph():
 		"""
 		# distance_to_goal<3, self.t>=10, is_crash, info 
 		# print("get reward",self.target.start, self.target.goal, self.target.t, self.target.pos)
-		distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
+		# distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
+		distance_to_goal = percent_left(self.target)
 		# edge weights
 		c_e = 0.1*np.sum(self.nn_edge)
 		c_d = 0.8*distance_to_goal
 		c_j  = 0.1*compute_jerkness(self.target)
 		# print(c_e, c_d, c_j)
-		r = c_e-c_d-c_j
+		r = -c_e-c_d-c_j
+		# r = -c_e - c_d # try only distance to goal and stress
 		# t
-		if self.is_crash():
+		if collision.check(self.target.pos, [self.target.history[-2][1], self.target.history[-2][2]]):
 			return -99999, 'crash' 
 		elif distance_to_goal<=1:
-			return r, 'reach_goal'
+			# return r, 'reach_goal'
+			return 10000, 'reach_goal'
 		elif self.target.t>=10:
 			return r, 'time_out'
 		else:
@@ -392,6 +430,8 @@ class Graph():
 
 
 if __name__ =='__main__':
+	
+
 	env = Graph()
 	s = env.reset()
 	print("======")

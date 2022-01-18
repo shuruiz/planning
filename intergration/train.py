@@ -1,4 +1,3 @@
-
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -6,9 +5,16 @@ from tensorflow.keras import layers
 from model import _build_model
 from core import Graph
 
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+gpus = tf.config.experimental.list_logical_devices('GPU')
+print(gpus)
+
 # Configuration paramaters for the whole setup
 seed = 42
-gamma = 0.99  # Discount factor for past rewards
+gamma = 0.9  #0.99, Discount factor for past rewards
 epsilon = 1.0  # Epsilon greedy parameter
 epsilon_min = 0.1  # Minimum epsilon greedy parameter
 epsilon_max = 1.0  # Maximum epsilon greedy parameter
@@ -35,7 +41,8 @@ model = _build_model(num_actions)
 # loss between the Q-values is calculated the target Q-value is stable.
 model_target = _build_model(num_actions)
 
-optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
+# optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
+optimizer = keras.optimizers.Adagrad(learning_rate=0.002)
 
 # Experience replay buffers
 action_history = []
@@ -61,7 +68,7 @@ update_target_network = 10000
 # Using huber loss for stability
 loss_function = keras.losses.Huber()
 
-while episode_count<20000:  # Run until solved
+while episode_count<1000000:  # Run until solved
 	# state = np.array(env.reset())
 	state = env.reset()
 	# print('==== episode====:', episode_count)
@@ -215,22 +222,26 @@ while episode_count<20000:  # Run until solved
 
 	# Update running reward to check condition for solving
 	episode_reward_history.append(episode_reward)
-	if len(episode_reward_history) > 100:
+	if len(episode_reward_history) > 1000000:
 		del episode_reward_history[:1]
-	running_reward = np.mean(episode_reward_history)
+	reward_len = len(episode_reward_history)
+	if reward_len<=100:
+		running_reward = np.mean(episode_reward_history)
+	else:
+		running_reward = np.mean(episode_reward_history[reward_len-100:])
 
 	episode_count += 1
 	if episode_count%100 ==0:
 		print("episode %d running reward %f" %(episode_count, running_reward))
-	if episode_count%10000==0:
-		np.save('episode_history'+str(int(episode_count/10000)), episode_reward_history)
+	if episode_count%5000==0:
+		np.save('simple_model_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('model')
-			model_target.save('model_target')
+			model.save('simple_model')
+			model_target.save('simple)model_target')
 		except Exception as e:
 			print(e)
 
-	if running_reward > 40:  # Condition to consider the task solved
-		print("Solved at episode {}!".format(episode_count))
-		break
+	# if running_reward > 200:  # Condition to consider the task solved
+		# print("Solved at episode {}!".format(episode_count))
+		# break
