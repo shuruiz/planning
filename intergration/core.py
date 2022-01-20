@@ -196,7 +196,7 @@ class Graph():
 
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-3,3,0.1), decimals=1), np.round(np.arange(-2,2,0.5), decimals=1))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-2,4,0.1), decimals=1), np.round(np.arange(-2,2,0.5), decimals=1))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -404,18 +404,21 @@ class Graph():
 		# distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
 		distance_to_goal = percent_left(self.target)
 		# edge weights
-		c_e = 0.1*np.sum(self.nn_edge)
-		c_d = 0.8*distance_to_goal
-		c_j  = 0.1*compute_jerkness(self.target)
-		# print(c_e, c_d, c_j)
-		r = -c_e-c_d-c_j
+		c_e = np.sum(self.nn_edge)
+		c_d = distance_to_goal
+		c_j  = compute_jerkness(self.target)
+		
+		# r = -c_e-c_d-c_j
+		r = math.exp(-0.1*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**3
+		# r = -c_e/(0.1*c_d+1) - c_j/(0.1*c_d+1) + (1000/c_d)**2
+		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start)
 		# r = -c_e - c_d # try only distance to goal and stress
 		# t
 		if collision.check(self.target.pos, [self.target.history[-2][1], self.target.history[-2][2]]):
-			return -99999, 'crash' 
-		elif distance_to_goal<=1:
+			return -9999, 'crash' 
+		elif distance_to_goal<=10:
 			# return r, 'reach_goal'
-			return 10000, 'reach_goal'
+			return 9999999, 'reach_goal'
 		elif self.target.t>=10:
 			return r, 'time_out'
 		else:

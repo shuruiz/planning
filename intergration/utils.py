@@ -40,9 +40,12 @@ def percent_left(node):
     """
     all_dist = get_distance_pt(node.start, node.goal)
     dist_left = get_distance_pt(node.pos, node.goal)
-    if all_dist==0:
-        return 0
-    return 100* dist_left / all_dist
+
+    # print("dist to goal", dist_left, 100* dist_left / all_dist)
+    return dist_left
+    # if all_dist==0:
+    #     return 0
+    # return 100* dist_left / all_dist
 
 def get_socially_acceptable(veh):
     """
@@ -156,7 +159,8 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         
         
         if tasks is not None:
-            task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])
+            # task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])
+            task = np.array(tasks[0]) # only one task, going through
             task = np.expand_dims(task, axis=0)
             veh = np.vstack((task, veh))
 
