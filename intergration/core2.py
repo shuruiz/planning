@@ -110,13 +110,14 @@ class TargetNode():
 	"""
 	def __init__(self, traj):
 		self.traj = traj
-		self.start=traj[10] # position at 5th second
+		self.start=traj[9] # position at 5th second
 		self.goal=traj[-1] # last point
 		self.pos=self.start
 		self.task=np.array([self.start,self.goal])
   
 		self.a,self.v = self._get_av(traj[8], traj[9], traj[10])
-		self.theta = self._get_theta(traj[9], traj[10])
+		self.theta, _ = self._get_theta(traj[9], traj[10])
+		self.guide = self._get_guide(self.traj)
 		self.t=0
 		
 		self.history=[]
@@ -128,17 +129,34 @@ class TargetNode():
 		v9 = np.linalg.norm(prev - prev2)/0.5
 		a = (v10-v9)/0.5
 		return a, v10
-	
+
 	def _get_theta(self, prev,curr):
+		diff_x = curr[0]-prev[0] 
+		diff_y = curr[1]-prev[1]
+		indicator=1
+		if diff_x<=0 and diff_y>=0:
+			indicator=2
+		elif diff_x<=0 and diff_y<=0:
+			indicator=3
+		else:
+			indicator=4
 		try:
-			diff = curr[0]-prev[0] 
-			if diff !=0:
-				tan = (curr[1]-prev[1])/diff
-				return math.atan(tan)
+			if diff_x !=0:
+				tan = diff_y/diff_x
+				# print("tan", tan, math.atan(tan)*180/math.pi)
+				return math.atan(tan)*180/math.pi, indicator
 			else:
-				return 90
+				return 90, indicator
 		except:
-			return 90
+			return 90, indicator
+
+	def _get_guide(self, traj):
+		guide=[]
+		for i in range(9,19):
+			a,_ = self._get_av(traj[i-1], traj[i], traj[i+1])
+			theta, indicator = self._get_theta(traj[i], traj[i+1])
+			guide.append([a, theta, indicator])
+		return guide
 
 	# def act(self, action_pair):
 	# 	_a, _theta = action_pair[0], action_pair[1] # can change the action to  [delta_a, delta_theta]
@@ -160,7 +178,8 @@ class Node():
 		self.agent=agent
 		# self.t=0
 
-		self.pred=np.array([traj[-1]]*10).reshape((10,2))
+		# self.pred=np.array([traj[-1]]*10).reshape((10,2))
+		self.pred = traj[10:]
 		if agent=='veh':
 			self.risk=risk
 			# self.pred=pred_veh(self.traj)
@@ -193,10 +212,10 @@ class Graph():
 		# self.cmodel=models[2]
 		# self.riskmodel=models[3]
 		# self.lane_boundary=lane_boundary
-
+		self.target_dist_to_others=[]
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-2,4,0.1), decimals=1), np.round(np.arange(-2,2,0.5), decimals=1))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-2,4,0.1), decimals=1), np.round(np.arange(-20,20,5), decimals=1))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -243,7 +262,6 @@ class Graph():
 		self._update_edges()
 		# build edges
 	def _sort_env(self):
-
 		v_distance_key=[]
 		for veh in self.env_veh:
 			d = get_distance_pt(self.target.pos, veh.get_pos(self.target.t))
@@ -265,8 +283,7 @@ class Graph():
 		# self.env_cyc=[x for _, x in sorted(zip(c_distance_key, self.env_cyc))]
 		self.env_cyc = node_sort(c_distance_key, self.env_cyc)
 
-		
-
+		self.target_dist_to_others = v_distance_key + p_distance_key + c_distance_key
 
 	def _update_edges(self):
 		self.edges=[]
@@ -365,15 +382,26 @@ class Graph():
 		"""
 		acc, theta = self.action_dict[action]
 		# print("acc theta", acc, theta)
-		self.target.a = self.target.a+acc
-		self.target.theta=self.target.theta+theta
+		guide_a, guide_theta, guide_indicator  = self.target.guide[self.target.t]
+
+		self.target.a = guide_a+acc
+		self.target.theta=guide_theta+theta
+
 
 		distance = self.target.v*0.5+0.5*self.target.a*0.25
 		radian = self.target.theta*math.pi/180
 		dx, dy = distance*math.cos(radian), distance*math.sin(radian)
-		
 		#update state
-		self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]+dy]
+		if guide_indicator==1: # zone 1
+			self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]+dy]
+		elif guide_indicator==2:
+			self.target.pos =[self.target.pos[0]-dx, self.target.pos[1]+dy]
+		elif guide_indicator==3:
+			self.target.pos =[self.target.pos[0]-dx, self.target.pos[1]-dy]
+		else:
+			self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]-dy]
+
+		
 		self.target.v = self.target.v+self.target.a*0.5
 		self.target.t +=1 # plan step move forward
 
@@ -412,14 +440,15 @@ class Graph():
 		c_j  = compute_jerkness(self.target)
 		
 		# r = -c_e-c_d-c_j
-		r = math.exp(-0.1*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**3
+		
 		# r = -c_e/(0.1*c_d+1) - c_j/(0.1*c_d+1) + (1000/c_d)**2
-		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start)
+		
 		# r = -c_e - c_d # try only distance to goal and stress
-		# t
-		if  collision.check(self.target.pos, [self.target.history[-2][1], self.target.history[-2][2]]):
-			return -9999, 'crash' 
-		elif distance_to_goal<=10:
+		r = math.exp(-0.1*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**3  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
+		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start)
+		if min(self.target_dist_to_others)<0.5 or collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
+			return -9999999, 'crash' 
+		elif distance_to_goal<=5:
 			# return r, 'reach_goal'
 			return 9999999, 'reach_goal'
 		elif self.target.t>=10:

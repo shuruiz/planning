@@ -159,9 +159,10 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         
         
         if tasks is not None:
-            # task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])
+            # task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])  # random select a task from task pool
             task = np.array(tasks[0]) # only one task, going through
             task = np.expand_dims(task, axis=0)
+            
             veh = np.vstack((task, veh))
 
         veh, ped, cyc = socially_acceptance_check(veh, ped, cyc)
