@@ -158,17 +158,23 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         veh =veh_under_category[np.random.choice(veh_under_category.shape[0], max_n_veh, replace=False)]
         
         
-        if tasks is not None:
-            # task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])  # random select a task from task pool
-            task = np.array(tasks[0]) # only one task, going through
-            task = np.expand_dims(task, axis=0)
-            
-            veh = np.vstack((task, veh))
+
 
         veh, ped, cyc = socially_acceptance_check(veh, ped, cyc)
-        
-        if len(veh)==0 or len(ped)==0 or len(cyc)==0:
+        # print(veh.shape)
+        if len(veh)<=1 or len(ped)==0 or len(cyc)==0:
             continue
+
+        if tasks is not None:
+            task = np.array(tasks[np.random.choice(len(tasks), 1, replace=False)[0]])  # random select a task from task pool
+            # task = np.array(tasks[0]) # only one task, going through
+
+            
+            task = np.expand_dims(task, axis=0)
+            # print("task shape",task.shape)
+            veh = np.vstack((task, veh))
+
+        
         scene_data['ped']=np.round(ped, decimals=3)
         scene_data['cyc']=np.round(cyc, decimals=3)
         scene_data['veh']=np.round(veh,decimals=3)

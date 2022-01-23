@@ -7,7 +7,7 @@ from core2 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -21,7 +21,7 @@ epsilon_max = 1.0  # Maximum epsilon greedy parameter
 epsilon_interval = (
 	epsilon_max - epsilon_min
 )  # Rate at which to reduce chance of random action being taken
-batch_size = 64  # Size of batch taken from replay buffer
+batch_size = 32  # Size of batch taken from replay buffer
 max_steps_per_episode = 10
 
 # # Use the Baseline Atari environment because of Deepmind helper functions
@@ -31,7 +31,7 @@ max_steps_per_episode = 10
 # env.seed(seed)
 env=Graph()
 
-num_actions = 480
+num_actions = 800
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
@@ -42,8 +42,8 @@ model = _build_simple_model2(num_actions)
 model_target = _build_simple_model2(num_actions)
 
 # optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
-optimizer = keras.optimizers.Adagrad(learning_rate=0.002)
-# optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
+# optimizer = keras.optimizers.Adagrad(learning_rate=0.002)
+optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
 
 # Experience replay buffers
 action_history = []
@@ -59,7 +59,7 @@ frame_count = 0
 # epsilon_random_frames = 50000
 epsilon_random_frames = 50000
 # Number of frames for exploration
-epsilon_greedy_frames = 2000000.0
+epsilon_greedy_frames = 1000000.0
 # Maximum replay length
 # Note: The Deepmind paper suggests 1000000 however this causes memory issues
 max_memory_length = 300000
@@ -236,13 +236,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("guided3x_exp episode %d running reward %f" %(episode_count, running_reward))
+		print("guided3z_exp episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('guided3x_exp_episode_history', episode_reward_history)
+		np.save('guided3z_exp_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('simple_model_guided3x_exp') # only one task
-			model_target.save('simple_model_target_guided3x_exp')
+			model.save('simple_model_guided3z_exp') # only one task
+			model_target.save('simple_model_target_guided3z_exp')
 		except Exception as e:
 			print(e)
 

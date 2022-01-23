@@ -235,5 +235,5 @@ def _build_simple_model2(n_actions):
 
 if __name__ =='__main__':
     # model = _build_simple_model(480)
-    model = _build_simple_model2(480)
+    model = _build_simple_model2(800)
     model.summary()

@@ -215,7 +215,7 @@ class Graph():
 		self.target_dist_to_others=[]
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-2,4,0.1), decimals=1), np.round(np.arange(-20,20,5), decimals=1))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-2,2,0.1), decimals=1), np.round(np.arange(-20,20,2), decimals=0))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -432,8 +432,8 @@ class Graph():
 		"""
 		# distance_to_goal<3, self.t>=10, is_crash, info 
 		# print("get reward",self.target.start, self.target.goal, self.target.t, self.target.pos)
-		# distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
-		distance_to_goal = percent_left(self.target)
+		distance_to_goal = get_distance_pt(self.target.pos,  self.target.goal)
+		# distance_to_goal = percent_left(self.target)
 		# edge weights
 		c_e = np.sum(self.nn_edge)
 		c_d = distance_to_goal
