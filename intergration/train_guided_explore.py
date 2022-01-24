@@ -7,7 +7,7 @@ from core2 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="3"
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -35,11 +35,11 @@ num_actions = 800
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
-model = _build_simple_model(num_actions)
+model = _build_simple_model2(num_actions)
 # Build a target model for the prediction of future rewards.
 # The weights of a target model get updated every 10000 steps thus when the
 # loss between the Q-values is calculated the target Q-value is stable.
-model_target = _build_simple_model(num_actions)
+model_target = _build_simple_model2(num_actions)
 
 # optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
 optimizer = keras.optimizers.Adagrad(learning_rate=0.002)
@@ -236,13 +236,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("guided3a_exp episode %d running reward %f" %(episode_count, running_reward))
+		print("guided3y1_exp episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('guided3a_exp_episode_history', episode_reward_history)
+		np.save('guided3y1_exp_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('simple_model_guided3a_exp') # only one task
-			model_target.save('simple_model_target_guided3a_exp')
+			model.save('simple_model2_guided3y1_exp') # only one task
+			model_target.save('simple_model2_target_guided3y1_exp')
 		except Exception as e:
 			print(e)
 

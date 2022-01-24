@@ -284,6 +284,7 @@ class Graph():
 		self.env_cyc = node_sort(c_distance_key, self.env_cyc)
 
 		self.target_dist_to_others = v_distance_key + p_distance_key + c_distance_key
+		# print('dist to others', self.target_dist_to_others)
 
 	def _update_edges(self):
 		self.edges=[]
