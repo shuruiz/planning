@@ -116,7 +116,7 @@ class TargetNode():
 		self.task=np.array([self.start,self.goal])
   
 		self.a,self.v = self._get_av(traj[8], traj[9], traj[10])
-		self.theta, _ = self._get_theta(traj[9], traj[10])
+		self.theta, self.indicator = self._get_theta(traj[9], traj[10])
 		self.guide = self._get_guide(self.traj)
 		self.t=0
 		
@@ -149,6 +149,19 @@ class TargetNode():
 				return 90, indicator
 		except:
 			return 90, indicator
+
+	def _update_indicator(self):
+		prev = [self.history[-2][1], self.history[-2][2]]
+		curr = self.pos
+		diff_x = curr[0]-prev[0] 
+		diff_y = curr[1]-prev[1]
+		self.indicator=1
+		if diff_x<=0 and diff_y>=0:
+			self.indicator=2
+		elif diff_x<=0 and diff_y<=0:
+			self.indicator=3
+		else:
+			self.indicator=4
 
 	def _get_guide(self, traj):
 		guide=[]
@@ -401,11 +414,11 @@ class Graph():
 		radian = self.target.theta*math.pi/180
 		dx, dy = distance*math.cos(radian), distance*math.sin(radian)
 		#update state
-		if guide_indicator==1: # zone 1
+		if self.target.indicator==1: # zone 1
 			self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]+dy]
-		elif guide_indicator==2:
+		elif self.target.indicator==2:
 			self.target.pos =[self.target.pos[0]-dx, self.target.pos[1]+dy]
-		elif guide_indicator==3:
+		elif self.target.indicator==3:
 			self.target.pos =[self.target.pos[0]-dx, self.target.pos[1]-dy]
 		else:
 			self.target.pos =[self.target.pos[0]+dx, self.target.pos[1]-dy]
@@ -416,7 +429,8 @@ class Graph():
 
 
 		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], self.target.a, self.target.theta])
-
+		
+		self.target._update_indicator()
 		# update the state
 		self._sort_env()
 		self._update_edges()  
