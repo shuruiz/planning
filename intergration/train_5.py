@@ -8,7 +8,7 @@ from core_noguide import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="3"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -22,7 +22,7 @@ epsilon_max = 1.0  # Maximum epsilon greedy parameter
 epsilon_interval = (
 	epsilon_max - epsilon_min
 )  # Rate at which to reduce chance of random action being taken
-batch_size = 32  # Size of batch taken from replay buffer
+batch_size = 64  # Size of batch taken from replay buffer
 max_steps_per_episode = 10
 
 # # Use the Baseline Atari environment because of Deepmind helper functions
@@ -237,13 +237,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("model6_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("model5_thru episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('model6_thru_episode_history', episode_reward_history)
+		np.save('model5_thru_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_model6_thru') # only one task
-			model_target.save('reduced_target_model6_thru')
+			model.save('reduced_model5_thru') # only one task
+			model_target.save('reduced_target_model5_thru')
 		except Exception as e:
 			print(e)
 
