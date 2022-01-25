@@ -3,12 +3,12 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
-from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model
+from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model, _build_reduced_model2
 from core7 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -32,7 +32,7 @@ max_steps_per_episode = 10
 # env.seed(seed)
 env=Graph()
 
-num_actions = 200
+num_actions = 24
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
@@ -42,8 +42,8 @@ model = _build_reduced_model(num_actions)
 # loss between the Q-values is calculated the target Q-value is stable.
 model_target = _build_reduced_model(num_actions)
 
-optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
-# optimizer = keras.optimizers.Adagrad(learning_rate=0.03)
+# optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
+optimizer = keras.optimizers.Adagrad(learning_rate=0.03)
 # optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
 
 # Experience replay buffers
@@ -237,13 +237,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("model7_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("model8_thru episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('model7_thru_episode_history', episode_reward_history)
+		np.save('model8_thru_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_model7_thru') # only one task
-			model_target.save('reduced_target_model7_thru')
+			model.save('reduced_model8_thru') # only one task
+			model_target.save('reduced_target_model8_thru')
 		except Exception as e:
 			print(e)
 

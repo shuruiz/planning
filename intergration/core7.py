@@ -215,7 +215,7 @@ class Graph():
 		self.target_dist_to_others=[]
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-1,1,0.1), decimals=1), np.round(np.arange(-10,10,2), decimals=0))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.1,0.05), decimals=1), np.round(np.arange(-3,3,1), decimals=0))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -302,7 +302,8 @@ class Graph():
 
 
 	def wrap_nn_input(self):
-		subject =np.array([self.target.start[0], self.target.start[1], self.target.goal[0], self.target.goal[1], self.target.pos[0],self.target.pos[1],self.target.a, self.target.theta, self.target.t])
+		# subject =np.array([self.target.start[0], self.target.start[1], self.target.goal[0], self.target.goal[1], self.target.pos[0],self.target.pos[1],self.target.a, self.target.theta, self.target.t])
+		subject =np.array([self.target.goal[0], self.target.goal[1], self.target.pos[0],self.target.pos[1],self.target.a, self.target.theta, self.target.t])
 		veh=[]
 		v_count=0
 		v_edge=[]
