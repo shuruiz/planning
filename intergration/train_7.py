@@ -4,7 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
 from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model
-from core_noguide import Graph
+from core7 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
@@ -32,7 +32,7 @@ max_steps_per_episode = 10
 # env.seed(seed)
 env=Graph()
 
-num_actions = 800
+num_actions = 200
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
@@ -42,8 +42,8 @@ model = _build_reduced_model(num_actions)
 # loss between the Q-values is calculated the target Q-value is stable.
 model_target = _build_reduced_model(num_actions)
 
-# optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
-optimizer = keras.optimizers.Adagrad(learning_rate=0.03)
+optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
+# optimizer = keras.optimizers.Adagrad(learning_rate=0.03)
 # optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
 
 # Experience replay buffers
