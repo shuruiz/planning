@@ -437,7 +437,7 @@ class Graph():
 		# distance_to_goal = percent_left(self.target)
 		# edge weights
 		c_e = np.sum(self.nn_edge)
-		c_d = distance_to_goal
+		c_d = distance_to_goal+0.001 # avoid divided by 0
 		c_j  = compute_jerkness(self.target)
 		
 		# r = -c_e-c_d-c_j

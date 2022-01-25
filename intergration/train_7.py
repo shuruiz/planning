@@ -8,7 +8,7 @@ from core7 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -17,7 +17,7 @@ print(gpus)
 seed = 42
 gamma = 0.9  #0.99, Discount factor for past rewards
 epsilon = 1.0  # Epsilon greedy parameter
-epsilon_min = 0.1  # Minimum epsilon greedy parameter
+epsilon_min = 0.05  # Minimum epsilon greedy parameter
 epsilon_max = 1.0  # Maximum epsilon greedy parameter
 epsilon_interval = (
 	epsilon_max - epsilon_min
@@ -237,13 +237,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("model5_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("model7_thru episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('model5_thru_episode_history', episode_reward_history)
+		np.save('model7_thru_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_model5_thru') # only one task
-			model_target.save('reduced_target_model5_thru')
+			model.save('reduced_model7_thru') # only one task
+			model_target.save('reduced_target_model7_thru')
 		except Exception as e:
 			print(e)
 
