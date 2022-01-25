@@ -429,7 +429,7 @@ class Graph():
 
 
 		self.target.history.append([self.target.t, self.target.pos[0], self.target.pos[1], self.target.a, self.target.theta])
-		
+
 		self.target._update_indicator()
 		# update the state
 		self._sort_env()
@@ -470,12 +470,14 @@ class Graph():
 		r = math.exp(-0.1*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**3  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
 		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start)
 		if min(self.target_dist_to_others)<0.5:
-			return -99999, 'crash' 
+			return r, 'crash' 
+			# return -99999, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
-		# 	return -9999999, 'crash' 
+		# 	return r, 'crash'
+			# return -9999999, 'crash' 
 		elif distance_to_goal<=5:
-			# return r, 'reach_goal'
-			return 9999999, 'reach_goal'
+			return r, 'reach_goal'
+			# return 9999999, 'reach_goal'
 		elif self.target.t>=10:
 			return r, 'time_out'
 		else:
