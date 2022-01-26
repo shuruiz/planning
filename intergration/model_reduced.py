@@ -236,7 +236,7 @@ def _build_simple_model2(n_actions):
 
 
 def _build_reduced_model(n_actions):
-    model_sub_in = Input(shape=(1, 9))
+    model_sub_in = Input(shape=(1, 7))
     # start x ,start y, goalx,goaly, posx, posy, v, a, theta
     model_sub_flatten = Flatten()(model_sub_in)
     # model_sub_mid = Dense(128, activation='relu', name='layer_sub_mid')(model_sub_flatten)

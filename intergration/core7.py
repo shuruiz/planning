@@ -452,7 +452,7 @@ class Graph():
 			return r, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
-		elif distance_to_goal<=10:
+		elif distance_to_goal<=5:
 			return r, 'reach_goal'
 			# return 9999999, 'reach_goal'
 		elif self.target.t>=10:
