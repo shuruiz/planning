@@ -123,6 +123,7 @@ class TargetNode():
 		
 		self.history=[]
 		self.history.append([self.t, self.pos[0],self.pos[1], self.a, self.theta])
+		# print("reset target node", self.history)
 		
 		
 	def _get_av(self, prev2, prev, curr):
@@ -198,6 +199,8 @@ class Node():
 		# temp = np.vstack((self.traj, self.pred))
 		return self.projected[t+9,:]
 
+	def get_traj(self, t):
+		return self.projected[t:t+10]
 
 class Graph():
 	"""
@@ -216,7 +219,7 @@ class Graph():
 		self.target_dist_to_others=[]
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.1,0.05), decimals=1), np.round(np.arange(-3,3,1), decimals=0))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.15,0.05), decimals=2), np.round(np.arange(-3,4,1), decimals=0))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -308,8 +311,9 @@ class Graph():
 		veh=[]
 		v_count=0
 		v_edge=[]
+		st = self.target.t 
 		for node in self.env_veh:
-			veh.append(node.traj)
+			veh.append(node.get_traj(st))
 			v_edge.append(self.edges[v_count])
 			v_count+=1
 			if v_count>=5:
@@ -324,7 +328,7 @@ class Graph():
 		ped=[]
 		p_edge=[]
 		for node in self.env_ped:
-			ped.append(node.traj)
+			ped.append(node.get_traj(st))
 			p_edge.append(self.edges[p_count+len(self.env_veh)])
 			p_count+=1
 			if p_count>=3:
@@ -339,7 +343,7 @@ class Graph():
 		cyc=[]
 		c_edge=[]
 		for node in self.env_cyc:
-			cyc.append(node.traj)
+			cyc.append(node.get_traj(st))
 			c_edge.append(self.edges[c_count+len(self.env_veh)+len(self.env_ped)])
 			c_count+=1
 			if c_count>=3:
@@ -384,9 +388,9 @@ class Graph():
 		action space [-3, 3] * [0,180] => 60*180 action space  # a, theta are delta
 		"""
 		acc, theta = self.action_dict[action]
-		# print("acc theta", acc, theta)
+		
 		guide_a, guide_theta, guide_indicator  = self.target.guide[self.target.t]
-
+		# print("acc theta", acc, theta, guide_a, guide_theta)
 		self.target.a = guide_a+acc
 		self.target.theta=guide_theta+theta
 
@@ -421,7 +425,7 @@ class Graph():
 		state_next = self.wrap_nn_input()
 		reward, info = self._get_reward()
 
-		if  info == 'reach_goal' or info== 'crash':
+		if  info == 'reach_goal' or info== 'crash' or info=='time_out':
 			# update reward
 			return state_next, reward, True, info
 		else:
@@ -439,7 +443,7 @@ class Graph():
 		# distance_to_goal = percent_left(self.target)
 		# edge weights
 		c_e = np.sum(self.nn_edge)
-		c_d = distance_to_goal+0.001 # avoid divided by 0
+		c_d = distance_to_goal+0.01 # avoid divided by 0
 		c_j  = compute_jerkness(self.target)
 		
 		# r = -c_e-c_d-c_j
@@ -447,8 +451,8 @@ class Graph():
 		# r = -c_e/(0.1*c_d+1) - c_j/(0.1*c_d+1) + (1000/c_d)**2
 		
 		# r = -c_e - c_d # try only distance to goal and stress
-		r = math.exp(-0.1*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**3  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
-		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start)
+		r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
+		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start, self.target.t)
 		if min(self.target_dist_to_others)<0.5:
 			return r, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
@@ -463,6 +467,7 @@ class Graph():
 
 
 	def reset(self):
+		# print("resetting.................")
 		self.sample=self.gen_scene.generate()
 		self._build_graph_()
 		return self.wrap_nn_input()
