@@ -1,0 +1,14 @@
+Cyclist: running time 5h 10min
+
+	Final displacement error: 14.09
+	Average displacement error: 6.05
+
+Pedestrian: running time 621 seconds
+
+	Final displacement error: 6.40
+	Average displacement error: 2.82
+
+Cyclist: running time 2000 seconds
+
+	Final displacement error: 37.96
+	Average displacement error: 20.76
