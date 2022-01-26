@@ -4,11 +4,11 @@ from tensorflow import keras
 from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
 from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model, _build_reduced_model2
-from core7 import Graph
+from core9 import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="3"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -22,7 +22,7 @@ epsilon_max = 1.0  # Maximum epsilon greedy parameter
 epsilon_interval = (
 	epsilon_max - epsilon_min
 )  # Rate at which to reduce chance of random action being taken
-batch_size = 64  # Size of batch taken from replay buffer
+batch_size = 32  # Size of batch taken from replay buffer
 max_steps_per_episode = 10
 
 # # Use the Baseline Atari environment because of Deepmind helper functions
@@ -43,7 +43,7 @@ model = _build_reduced_model2(num_actions)
 model_target = _build_reduced_model2(num_actions)
 
 # optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
-optimizer = keras.optimizers.Adagrad(learning_rate=0.03)
+optimizer = keras.optimizers.Adagrad(learning_rate=0.003)
 # optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
 
 # Experience replay buffers
@@ -237,13 +237,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("model8_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("model9_all episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('model8_thru_episode_history', episode_reward_history)
+		np.save('model9_all_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_model8_thru') # only one task
-			model_target.save('reduced_target_model8_thru')
+			model.save('reduced_model9_all') # only one task
+			model_target.save('reduced_target_model9_all')
 		except Exception as e:
 			print(e)
 
