@@ -8,7 +8,7 @@ from corex import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -239,13 +239,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxc_universal episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxd_universal episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxc_universal_episode_history', episode_reward_history)
+		np.save('modelxd_universal_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxc_universal') # only one task
-			model_target.save('reduced_target_modelxc_universal')
+			model.save('reduced_modelxd_universal') # only one task
+			model_target.save('reduced_target_modelxd_universal')
 		except Exception as e:
 			print(e)
 
