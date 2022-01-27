@@ -120,7 +120,7 @@ while episode_count<2000000:  # Run until solved
 		# print("action chosen", action)
 		state_next, reward, done, _ = env.step(action)
 
-		print("reward at time", reward, timestep, done, _)
+		# print("reward at time", reward, timestep, done, _)
 		# state_next = np.array(state_next)
 
 		episode_reward += reward
@@ -239,13 +239,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxa_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxb_all episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxa_thru_episode_history', episode_reward_history)
+		np.save('modelxb_all_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxa_thru') # only one task
-			model_target.save('reduced_target_modelxa_thru')
+			model.save('reduced_modelxb_all') # only one task
+			model_target.save('reduced_target_modelxb_all')
 		except Exception as e:
 			print(e)
 
