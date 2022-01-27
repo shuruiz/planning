@@ -451,10 +451,13 @@ class Graph():
 		# r = -c_e/(0.1*c_d+1) - c_j/(0.1*c_d+1) + (1000/c_d)**2
 		
 		# r = -c_e - c_d # try only distance to goal and stress
-		r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
+		r = math.exp(-0.2*c_e) * math.exp(-1*c_j) *self.target.v 
+
+		# r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
 		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start, self.target.t)
+		# print("and", -0.2*c_e, -0.1*c_j, self.target.v , math.exp(-0.2*c_e) , math.exp(-1*c_j) )
 		if min(self.target_dist_to_others)<0.5:
-			return r, 'crash' 
+			return 0, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
 		elif distance_to_goal<=5:

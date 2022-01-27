@@ -67,7 +67,7 @@ max_memory_length = 300000
 # Train the model after a few actions
 update_after_actions = 4
 # How often to update the target network
-update_target_network = 5000
+update_target_network = 10000
 # Using huber loss for stability
 loss_function = keras.losses.Huber()
 
@@ -120,7 +120,7 @@ while episode_count<2000000:  # Run until solved
 		# print("action chosen", action)
 		state_next, reward, done, _ = env.step(action)
 
-		# print("reward at time", reward, timestep, done, _)
+		print("reward at time", reward, timestep, done, _)
 		# state_next = np.array(state_next)
 
 		episode_reward += reward
@@ -239,13 +239,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelx_thru episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxa_thru episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelx_thru_episode_history', episode_reward_history)
+		np.save('modelxa_thru_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelx_thru') # only one task
-			model_target.save('reduced_target_modelx_thru')
+			model.save('reduced_modelxa_thru') # only one task
+			model_target.save('reduced_target_modelxa_thru')
 		except Exception as e:
 			print(e)
 
