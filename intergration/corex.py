@@ -97,7 +97,8 @@ class SceneGenerator():
 		self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
 
 
-		self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
+		# self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
+		self.tasks = None
 	def generate(self):
 		sampling_res = Gibbs_sampling(max_scene=1, Pxy=self.pxy, Pxz=self.pxz, Pyzx=self.pyzx, poolv=self.poolv, poolp=self.poolp, poolc=self.poolc,\
 							 veh_model = self.veh_gmm, ped_model=self.ped_gmm, cyc_model=self.cyc_gmm,\
