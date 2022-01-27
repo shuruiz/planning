@@ -211,7 +211,7 @@ while episode_count<2000000:  # Run until solved
 
 		if frame_count % update_target_network == 0:
 			# update the the target network with new weights
-			model_target.set_weights(model.get_weights())
+			model_target.set_weights(model.get_weights())  
 			# Log details
 			template = "running reward: {:.2f} at episode {}, frame count {}"
 			print(template.format(running_reward, episode_count, frame_count))
