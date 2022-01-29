@@ -8,7 +8,7 @@ from corex import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -43,7 +43,7 @@ model = _build_reduced_model2(num_actions)
 model_target = _build_reduced_model2(num_actions)
 
 # optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
-optimizer = keras.optimizers.Adagrad(learning_rate=0.001)
+optimizer = keras.optimizers.Adagrad(learning_rate=0.003)
 # optimizer = keras.optimizers.Adadelta(learning_rate=0.003)
 
 # Experience replay buffers
@@ -239,13 +239,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxd_universal episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxf_universal episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxd_universal_episode_history', episode_reward_history)
+		np.save('modelxf_universal_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxd_universal') # only one task
-			model_target.save('reduced_target_modelxd_universal')
+			model.save('reduced_modelxf_universal') # only one task
+			model_target.save('reduced_target_modelxf_universal')
 		except Exception as e:
 			print(e)
 

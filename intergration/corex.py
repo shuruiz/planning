@@ -72,29 +72,29 @@ class SceneGenerator():
 	generate a scene
 	"""
 	def __init__(self):
-		# self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
-		# self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
-		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
+		self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
+		self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
+		self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
 
-		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
-		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
-		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
+		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
+		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
+		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
 
-		# self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
-		# self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
-		# self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+		self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
+		self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
+		self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
 
-		self.pxy= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxy_partial.pickle",'rb'))
-		self.pxz= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxz_partial.pickle",'rb'))
-		self.pyzx= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pyzx_partial.pickle",'rb'))
+		# self.pxy= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxy_partial.pickle",'rb'))
+		# self.pxz= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxz_partial.pickle",'rb'))
+		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pyzx_partial.pickle",'rb'))
 
-		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_model_partial.pickle",'rb'))
-		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_model_partial.pickle",'rb'))
-		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_model_partial.pickle",'rb'))
+		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_model_partial.pickle",'rb'))
+		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_model_partial.pickle",'rb'))
+		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_model_partial.pickle",'rb'))
 
-		self.poolv = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_pool_partial.pickle",'rb'))
-		self.poolp = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_pool_partial.pickle",'rb'))
-		self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
+		# self.poolv = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_pool_partial.pickle",'rb'))
+		# self.poolp = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_pool_partial.pickle",'rb'))
+		# self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
 
 
 		# self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
@@ -452,7 +452,7 @@ class Graph():
 		# r = -c_e/(0.1*c_d+1) - c_j/(0.1*c_d+1) + (1000/c_d)**2
 		
 		# r = -c_e - c_d # try only distance to goal and stress
-		r = math.exp(-0.2*c_e) * math.exp(-1*c_j) 
+		r = math.exp(-0.2*c_e) + math.exp(-1*c_j) 
 
 		# r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
 		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start, self.target.t)
