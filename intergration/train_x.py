@@ -239,13 +239,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxf_universal episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxj_universal episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxf_universal_episode_history', episode_reward_history)
+		np.save('modelxj_universal_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxf_universal') # only one task
-			model_target.save('reduced_target_modelxf_universal')
+			model.save('reduced_modelxj_universal') # only one task
+			model_target.save('reduced_target_modelxj_universal')
 		except Exception as e:
 			print(e)
 
