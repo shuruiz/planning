@@ -23,8 +23,8 @@ from IPython.display import display, clear_output
 import PIL
 
 
-import matlab
-import matlab.engine
+# import matlab
+# import matlab.engine
 
 
 from shapely.geometry import Point
@@ -38,8 +38,8 @@ class Scene(object):
         self.scene_num = len(self.dataset.scenes)
         self.yaw_th = 1.25
         self.distance_th = 10
-        self.eng = matlab.engine.start_matlab()
-        self.eng.cd(r'D:\\GitHub\\Clone\\planning\\ruixuan\\utils') 
+        # self.eng = matlab.engine.start_matlab()
+        # self.eng.cd(r'D:\\GitHub\\Clone\\planning\\ruixuan\\utils') 
         self.turning_scenes = []
         self.turning_yaw_diff = {}
         self.tunring_frames = []
