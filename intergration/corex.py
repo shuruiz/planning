@@ -72,33 +72,33 @@ class SceneGenerator():
 	generate a scene
 	"""
 	def __init__(self):
-		# self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
-		# self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
-		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
+		self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
+		self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
+		self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
 
-		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
-		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
-		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
+		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
+		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
+		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
 
-		# self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
-		# self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
-		# self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+		self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
+		self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
+		self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
 
-		self.pxy= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxy_partial.pickle",'rb'))
-		self.pxz= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxz_partial.pickle",'rb'))
-		self.pyzx= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pyzx_partial.pickle",'rb'))
+		# self.pxy= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxy_partial.pickle",'rb'))
+		# self.pxz= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pxz_partial.pickle",'rb'))
+		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_Pyzx_partial.pickle",'rb'))
 
-		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_model_partial.pickle",'rb'))
-		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_model_partial.pickle",'rb'))
-		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_model_partial.pickle",'rb'))
+		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_model_partial.pickle",'rb'))
+		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_model_partial.pickle",'rb'))
+		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_model_partial.pickle",'rb'))
 
-		self.poolv = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_pool_partial.pickle",'rb'))
-		self.poolp = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_pool_partial.pickle",'rb'))
-		self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
+		# self.poolv = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_veh_pool_partial.pickle",'rb'))
+		# self.poolp = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_ped_pool_partial.pickle",'rb'))
+		# self.poolc = pickle.load(open("/home/lab1/repo/planning/8kfb_gibbs/8kfb_cyc_pool_partial.pickle",'rb'))
 
 
-		self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
-		# self.tasks = None
+		# self.tasks = pickle.load(open("/home/lab1/repo/planning/tasks/task.pickle",'rb'))
+		self.tasks = None
 	def generate(self):
 		sampling_res = Gibbs_sampling(max_scene=1, Pxy=self.pxy, Pxz=self.pxz, Pyzx=self.pyzx, poolv=self.poolv, poolp=self.poolp, poolc=self.poolc,\
 							 veh_model = self.veh_gmm, ped_model=self.ped_gmm, cyc_model=self.cyc_gmm,\
@@ -464,7 +464,8 @@ class Graph():
 			return 0, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
-		elif distance_to_goal<=5:
+		# elif distance_to_goal<=5:
+		elif distance_to_goal<=1:
 			return r, 'reach_goal'
 			# return 9999999, 'reach_goal'
 		elif self.target.t>=10:

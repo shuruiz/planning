@@ -222,7 +222,8 @@ class Graph():
 		self.target_dist_to_others=[]
 		
 		
-		self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.15,0.05), decimals=2), np.round(np.arange(-3,4,1), decimals=0))) # delta a, delta theta
+		# self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.15,0.05), decimals=2), np.round(np.arange(-3,4,1), decimals=0))) # delta a, delta theta
+		self.action_dict = list(itertools.product(np.round(np.arange(-0.2,0.21,0.01), decimals=2), np.round(np.arange(-5,6,1), decimals=0))) # delta a, delta theta
 		# print(len(self.action_dict))
 		
 
@@ -464,7 +465,7 @@ class Graph():
 			return 0, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
-		elif distance_to_goal<=3:
+		elif distance_to_goal<=1:
 			return r, 'reach_goal'
 			# return 9999999, 'reach_goal'
 		elif self.target.t>=10:

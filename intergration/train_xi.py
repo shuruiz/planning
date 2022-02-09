@@ -8,7 +8,7 @@ from corex import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -32,7 +32,8 @@ max_steps_per_episode = 10
 # env.seed(seed)
 env=Graph()
 
-num_actions = 35
+# num_actions = 35 # model XI, xe, xa
+num_actions = 451 # model XII
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
@@ -239,13 +240,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxI_universal episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxII_universal episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxI_universal_episode_history', episode_reward_history)
+		np.save('modelxII_universal_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxI_universal') # only one task
-			model_target.save('reduced_target_modelxI_universal')
+			model.save('reduced_modelxII_universal') # only one task
+			model_target.save('reduced_target_modelxII_universal')
 		except Exception as e:
 			print(e)
 
