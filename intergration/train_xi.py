@@ -4,7 +4,8 @@ from tensorflow import keras
 from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
 from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model, _build_reduced_model2
-from corex import Graph
+# from corex import Graph
+from core_xi import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
