@@ -435,8 +435,12 @@ class Graph():
 		else:
 			# update reward
 			return state_next, reward, False, info
-		
 	
+	## get human reward		
+	# def _get_human_reward(self):
+	# 	for i in range(len(self.guide)):
+	# 		_a = self.guide[i][0]
+
 	def _get_reward(self):
 		"""
 		compute cost of the current state, A*sum_t sum_edge c_pi +B*c_goal +C* c_smoothness

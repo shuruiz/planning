@@ -9,7 +9,7 @@ from core_xi import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="3"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -34,15 +34,15 @@ max_steps_per_episode = 10
 env=Graph()
 
 # num_actions = 35 # model XI, xe, xa
-num_actions = 451 # model XII
+num_actions = 451 # model XII, XIII
 
 # The first model makes the predictions for Q-values which are used to
 # make a action.
-model = _build_simple_model2(num_actions)
+model = _build_reduced_model2(num_actions)
 # Build a target model for the prediction of future rewards.
 # The weights of a target model get updated every 10000 steps thus when the
 # loss between the Q-values is calculated the target Q-value is stable.
-model_target = _build_simple_model2(num_actions)
+model_target = _build_reduced_model2(num_actions)
 
 # optimizer = keras.optimizers.Adam(learning_rate=0.025, clipnorm=1.0)
 optimizer = keras.optimizers.Adagrad(learning_rate=0.003)
@@ -58,6 +58,8 @@ episode_reward_history = []
 running_reward = 0
 episode_count = 0
 frame_count = 0
+
+reward_human=[]
 # Number of frames to take random action and observe output, warm-up
 # epsilon_random_frames = 50000
 epsilon_random_frames = 50000
@@ -241,13 +243,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelxII_universal episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxIII_universal episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelxII_universal_episode_history', episode_reward_history)
+		np.save('modelxIII_universal_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelxII_universal') # only one task
-			model_target.save('reduced_target_modelxII_universal')
+			model.save('reduced_modelxIII_universal') # only one task
+			model_target.save('reduced_target_modelxIII_universal')
 		except Exception as e:
 			print(e)
 
