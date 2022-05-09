@@ -177,14 +177,14 @@ class TargetNode():
 		for i in range(9,19):
 			theta, indicator = self._get_theta(traj[i], traj[i+1])
 			distance = v*0.5
-			radian = guide_theta*math.pi/180
+			radian = theta*math.pi/180
 			dx, dy = abs(distance*math.cos(radian)), abs(distance*math.sin(radian))
 					#update state
-			if guide_indicator==1: # zone 1
+			if indicator==1: # zone 1
 				new_pos=[prev_pos[0]+dx, prev_pos[1]+dy]
-			elif guide_indicator==2:
+			elif indicator==2:
 				new_pos=[prev_pos[0]-dx, prev_pos[1]+dy]
-			elif guide_indicator==3:
+			elif indicator==3:
 				new_pos = [prev_pos[0]-dx, prev_pos[1]-dy]
 			else:
 				new_pos = [prev_pos[0]+dx, prev_pos[1]-dy]
