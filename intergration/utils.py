@@ -115,7 +115,7 @@ def MCMC_sampling(final_veh, final_ped, final_cyc, max_n_veh=8, max_n_ped=5, max
 def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
                    poolv, poolp, poolc,\
                    veh_model, ped_model, cyc_model, \
-                   max_n_veh=10, max_n_ped=5, max_n_cyc=5, tasks=None):
+                   max_n_veh=20, max_n_ped=10, max_n_cyc=10, tasks=None):
     sampling_result={}
     
     # initialization
@@ -136,6 +136,7 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
 #         print(x, y, z, Pxy[x])
         
         pxy = Pxy[x]/np.linalg.norm(Pxz[x], ord=1)
+        # pxy = Pxy[x]/np.linalg.norm(Pxy[x], ord=1)
         ped_category = np.random.choice(list(poolp.keys()), p=pxy)
         #sample trajectories
         ped_under_category = poolp[ped_category]

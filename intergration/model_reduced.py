@@ -464,6 +464,6 @@ def _build_reduced_model3(n_actions):
 
 if __name__ =='__main__':
     # model = _build_simple_model(480)
-    model = _build_simple_model2(24)
+    model = _build_reduced_model2(451)
     # model = _build_reduced_model2(24)
     model.summary()
