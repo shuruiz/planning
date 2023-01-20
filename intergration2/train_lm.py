@@ -4,8 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
 from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model, _build_reduced_model2
-# from corex import Graph
-from core_guide2 import Graph
+from core_lm import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
@@ -218,7 +217,7 @@ while episode_count<2000000:  # Run until solved
 			model_target.set_weights(model.get_weights())  
 			# Log details
 			template = "running reward: {:.2f} at episode {}, frame count {}"
-			print("log",template.format(running_reward, episode_count, frame_count))
+			print(template.format(running_reward, episode_count, frame_count))
 
 		# Limit the state and reward history
 		if len(rewards_history) > max_memory_length:
@@ -243,13 +242,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelx_guide2_overflow fixed episode %d running reward %f" %(episode_count, running_reward))
+		print("modelxIII_universal_lm episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelx_guide2_overflow_episode_history_fixed', episode_reward_history)
+		np.save('modelxIII_universal_episode_history_lm', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelx_guide2_overflow_fixed') # only one task
-			model_target.save('reduced_target_modelx_guide2_overflow_fixed')
+			model.save('reduced_modelxIII_universal_lm') 
+			model_target.save('reduced_target_modelxIII_universal_lm')
 		except Exception as e:
 			print(e)
 

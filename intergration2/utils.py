@@ -64,7 +64,7 @@ def get_socially_acceptable(veh):
     # add all that is distance> 4 with the first sample
     result_veh.append(veh[0])
     for i in range(1,n):
-        if x[0][i]>0.5:  # 1m
+        if x[0][i]>0.5:
             result_veh.append(veh[i])
     return result_veh
 
@@ -77,7 +77,7 @@ def get_socially_acceptable_different_types(type1, type2):
     for type2_traj in type2:
         for type1_traj in type1:
             distance = get_distance(type1_traj, type2_traj)
-            if min(distance)<0.5: # 1m
+            if min(distance)<0.5:
                 all_pass=False
                 break 
         if all_pass:
@@ -133,10 +133,21 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         x = veh_model.predict([veh_p.flatten()])[0]
         y = ped_model.predict([ped_p.flatten()])[0]
         z = cyc_model.predict([cyc_p.flatten()])[0]
-#         print(x, y, z, Pxy[x])
         
-        pxy = Pxy[x]/np.linalg.norm(Pxz[x], ord=1)
-        # pxy = Pxy[x]/np.linalg.norm(Pxy[x], ord=1)
+        if x!=0:
+            x=1
+
+        if y!=0:
+            y=1
+
+        z=1
+        # print(x, y, z, Pxy[x])
+        # print(Pxy)
+        # print(Pxz)
+        # print(Pyzx)
+        
+        pxy = Pxy[x]/np.linalg.norm(Pxy[x], ord=1)
+        # print("pxy", pxy, list(poolp.keys()), list(poolc.keys()), list(poolv.keys()))
         ped_category = np.random.choice(list(poolp.keys()), p=pxy)
         #sample trajectories
         ped_under_category = poolp[ped_category]
@@ -146,13 +157,22 @@ def Gibbs_sampling(max_scene, Pxy, Pxz, Pyzx, \
         
         pxz = Pxz[x]/np.linalg.norm(Pxz[x], ord=1)
         key_list= list(poolc.keys())
-        if len(key_list)!= len(pxz):
-            key_list=range(len(pxz))
+
+        # in the pxz, column 0 has value of 0
+        key_list = [0] + key_list # add a redundent key
+        # maxkey  = max(key_list)
+        # while len(key_list)!= len(pxz):
+        #     # never been used, just to make she shape
+        #     for _ in range(0, maxkey):
+        #         key_list.append(_) 
+
+        # print(Pxz[x],np.linalg.norm(Pxz[x], ord=1), "pxz",pxz, "keys", key_list)
         cyc_category = np.random.choice(key_list, p=pxz)
         cyc_under_category = poolc[cyc_category]
         cyc =cyc_under_category[np.random.choice(cyc_under_category.shape[0], max_n_cyc, replace=False)]
         
-#         print(Pyzx.shape, Pyzx[y][z].shape)
+        # print(Pyzx.shape, Pyzx[y][z].shape, y, z)
+
         pyzx = Pyzx[y][z]/np.linalg.norm(Pyzx[y][z], ord=1)
         v_category = np.random.choice(list(poolv.keys()), p=pyzx)
         veh_under_category = poolv[v_category]

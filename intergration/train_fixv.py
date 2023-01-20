@@ -5,11 +5,11 @@ from tensorflow.keras import layers
 # from model import _build_model, _build_simple_model, _build_simple_model2
 from model_reduced import _build_model, _build_simple_model, _build_simple_model2, _build_reduced_model, _build_reduced_model2
 # from corex import Graph
-from core_guide2 import Graph
+from core_fixv import Graph
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 gpus = tf.config.experimental.list_logical_devices('GPU')
 print(gpus)
@@ -243,13 +243,13 @@ while episode_count<2000000:  # Run until solved
 
 	episode_count += 1
 	if episode_count%100 ==0:
-		print("modelx_guide2_overflow fixed episode %d running reward %f" %(episode_count, running_reward))
+		print("model_fixv_ episode %d running reward %f" %(episode_count, running_reward))
 	if episode_count%5000==0:
-		np.save('modelx_guide2_overflow_episode_history_fixed', episode_reward_history)
+		np.save('model_fixv_episode_history', episode_reward_history)
 		print("reward history saved")
 		try:
-			model.save('reduced_modelx_guide2_overflow_fixed') # only one task
-			model_target.save('reduced_target_modelx_guide2_overflow_fixed')
+			model.save('reduced_modelx_fixv') # only one task
+			model_target.save('reduced_target_modelx_fixv')
 		except Exception as e:
 			print(e)
 

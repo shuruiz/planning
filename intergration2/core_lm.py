@@ -29,8 +29,8 @@ def compute_vweight(target, veh):
 
 	except:
 		print("raise expection compute_vweight")
-		return math.exp(veh.risk),999
-	return math.exp(veh.risk)*w,d
+		return math.exp(veh.risk)
+	return math.exp(veh.risk)*w
 	
 def compute_pcweight(target, pc):
 	"""
@@ -44,42 +44,8 @@ def compute_pcweight(target, pc):
 
 	except:
 		print("raise expection compute_pcweight")
-		return 1,999
-	return w,d
-
-
-def compute_vweight2(target, veh):
-	"""
-	computes the edge weights between target and veh
-	"""
-	# here only one pos, not all future positions
-	# the smaller the distance, the larger the weights
-	try:
-		d =get_distance_pt(target.traj[target.t+9], veh.get_pos(target.t))
-		
-		w = math.exp(-0.01* d) # the further, the lower the stress
-
-	except:
-		print("raise expection compute_vweight")
-		return math.exp(veh.risk), 999
-	return math.exp(veh.risk)*w, d
-	
-def compute_pcweight2(target, pc):
-	"""
-	computes the edge weights between target and ped/cyc
-	"""
-	try:
-		# print('pcw', target.pos)
-		# print(pc.get_pos(target.t))
-		d =get_distance_pt(target.traj[target.t+9], pc.get_pos(target.t))
-		w = math.exp(-0.01* d)
-
-	except:
-		print("raise expection compute_pcweight")
-		return 1, 999
-	return w, d
-
-
+		return 1
+	return w
 
 def compute_jerkness(target):
 	"""
@@ -106,35 +72,34 @@ class SceneGenerator():
 	generate a scene
 	"""
 	def __init__(self):
-		self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
-		self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
-		self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
+		# self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
+		# self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
+		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
 
-		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
-		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
-		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
+		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
+		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
+		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
 
-		self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
-		self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
-		self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+		# self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
+		# self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
+		# self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
 
-		#  lane merge 
-		# self.pxy= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxy_dist.pkl",'rb'))
-		# self.pxz= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxz_dist.pkl",'rb'))
-		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pyzx_dist.pkl",'rb'))
+		self.pxy= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxy_dist.pkl",'rb'))
+		self.pxz= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxz_dist.pkl",'rb'))
+		self.pyzx= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pyzx_dist.pkl",'rb'))
 
-		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_model.pkl",'rb'))
-		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_model.pkl",'rb'))
-		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_model.pkl",'rb'))
+		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_model.pkl",'rb'))
+		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_model.pkl",'rb'))
+		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_model.pkl",'rb'))
 
 
 		#remap
-		# vt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
-		# pt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
-		# ct = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_traj_pool.pkl",'rb'))
-		# self.poolv = {0: vt[1], 1:vt[2]}
-		# self.poolp = {0: pt[1], 1:pt[2]}
-		# self.poolc = {1:ct[2]}
+		vt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
+		pt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
+		ct = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_traj_pool.pkl",'rb'))
+		self.poolv = {0: vt[1], 1:vt[2]}
+		self.poolp = {0: pt[1], 1:pt[2]}
+		self.poolc = {1:ct[2]}
 
 		# self.poolv = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
 		# self.poolp = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
@@ -259,8 +224,6 @@ class Graph():
 		self.gen_scene=SceneGenerator()
 		self.sample=self.gen_scene.generate()
 		self.graph={}
-		self.model_output_stressor=[]
-		self.human_output_stressor=[]
 		# self.vmodel=models[0]
 		# self.pmodel=models[1]
 		# self.cmodel=models[2]
@@ -315,7 +278,6 @@ class Graph():
 		# print("==============")
 		self._sort_env()
 		self._update_edges()
-		self._update_human_edges()
 		# build edges
 	def _sort_env(self):
 		v_distance_key=[]
@@ -344,41 +306,18 @@ class Graph():
 
 	def _update_edges(self):
 		self.edges=[]
-		
-		self.model_stressor=[]
-
 		for node in self.env_veh:
-			weight,_ = compute_vweight(self.target, node)
-			self.model_stressor.append(_)
+			weight = compute_vweight(self.target, node)
 			self.edges.append(weight)
 
 		for node in self.env_cyc:
-			weight,_ = compute_pcweight(self.target, node)
-			self.model_stressor.append(_)
+			weight = compute_pcweight(self.target, node)
 			self.edges.append(weight)
 			
 		for node in self.env_ped:
-			weight,_ = compute_pcweight(self.target, node)
-			self.model_stressor.append(_)
+			weight = compute_pcweight(self.target, node)
 			self.edges.append(weight)
 
-	def _update_human_edges(self):
-		self.human_edges=[]
-		self.human_stressor=[]
-		for node in self.env_veh:
-			weight,_ = compute_vweight2(self.target, node)
-			self.human_stressor.append(_)
-			self.human_edges.append(weight)
-
-		for node in self.env_cyc:
-			weight,_ = compute_pcweight2(self.target, node)
-			self.human_stressor.append(_)
-			self.human_edges.append(weight)
-			
-		for node in self.env_ped:
-			weight,_ = compute_pcweight2(self.target, node)
-			self.human_stressor.append(_)
-			self.human_edges.append(weight)
 
 	def wrap_nn_input(self):
 		# subject =np.array([self.target.start[0], self.target.start[1], self.target.goal[0], self.target.goal[1], self.target.pos[0],self.target.pos[1],self.target.a, self.target.theta, self.target.t])
@@ -457,26 +396,6 @@ class Graph():
 	# 	"""
 	# 	return False
 
-	def _get_human_min(self):
-		d_min =float('inf')
-
-		for i, pt in enumerate(self.target.traj[10:]):
-			for veh in self.env_veh:
-				d = get_distance_pt(pt, veh.pred[i])	
-				if d < d_min:
-					d_min = d
-			for ped in self.env_ped:
-				d = get_distance_pt(pt, ped.pred[i])	
-				if d < d_min:
-					d_min = d
-			for cyc in self.env_cyc:
-				d = get_distance_pt(pt, cyc.pred[i])	
-				if d < d_min:
-					d_min = d
-		return d_min
-
-
-
 	def step(self, action):
 		"""
 		update graph, move to next state
@@ -513,7 +432,6 @@ class Graph():
 		# update the state
 		self._sort_env()
 		self._update_edges()  
-		self._update_human_edges()
 
 		
 		# compute reward
@@ -523,10 +441,10 @@ class Graph():
 
 		if  info == 'reach_goal' or info== 'crash' or info=='time_out':
 			# update reward
-			return state_next, reward, True, info, self.human_output_stressor, self.model_output_stressor, self._get_human_min()
+			return state_next, reward, True, info
 		else:
 			# update reward
-			return state_next, reward, False, info, self.human_output_stressor, self.model_output_stressor, float('inf')
+			return state_next, reward, False, info
 	
 	## get human reward		
 	# def _get_human_reward(self):
@@ -545,10 +463,6 @@ class Graph():
 		c_e = np.max(self.nn_edge)
 		c_d = distance_to_goal+0.01 # avoid divided by 0
 		c_j  = compute_jerkness(self.target)
-
-		self.human_output_stressor = np.min(self.human_stressor)
-		self.model_output_stressor =  np.min(self.model_stressor)
-
 		
 		# r = -c_e-c_d-c_j
 		
@@ -561,7 +475,7 @@ class Graph():
 		# r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
 		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start, self.target.t)
 		# print("and", -0.2*c_e, -0.1*c_j, self.target.v , math.exp(-0.2*c_e) , math.exp(-1*c_j) )
-		if min(self.target_dist_to_others)<1:
+		if min(self.target_dist_to_others)<0.5:
 			return 0, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
@@ -588,11 +502,11 @@ if __name__ =='__main__':
 	env = Graph()
 	s = env.reset()
 	print("======")
-	s_, r, done, info,hs, ms = env.step(2)
-	print(r, done, info, hs )
+	s_, r, done, info = env.step(2)
+	print(r, done, info)
 	print("======")
-	s_, r, done, info,hs, ms= env.step(20)
-	print(r, done, info, hs )
+	s_, r, done, info = env.step(20)
+	print(r, done, info)
 	print("======")
-	s_, r, done, info,hs, ms= env.step(60)
-	print(r, done, info, hs)
+	s_, r, done, info = env.step(60)
+	print(r, done, info)

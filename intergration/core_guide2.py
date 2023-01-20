@@ -117,7 +117,7 @@ class TargetNode():
 		self.pos=self.start
 		self.task=np.array([self.start,self.goal])
 		# print("task",self.task)
-  
+		self.ref=None
 		self.a,self.v = self._get_av(traj[8], traj[9], traj[10])
 		self.theta, _ = self._get_theta(traj[9], traj[10])
 		# self.guide = self._get_guide(self.traj)
@@ -172,7 +172,7 @@ class TargetNode():
 			dsum+= np.linalg.norm(traj[i] - traj[i+1])
 		v = dsum/5
 	#     v =env2.target.v
-		print(dsum, v)
+		# print(dsum, v)
 		
 		for i in range(9,19):
 			theta, indicator = self._get_theta(traj[i], traj[i+1])
@@ -191,10 +191,11 @@ class TargetNode():
 			ref.append(new_pos)
 			prev_pos = new_pos
 		ref = np.array(ref)
+		self.ref=ref
 		guide=[]
 		for i in range(9,19):
-			a,_ = _get_av2(ref[i-1], ref[i], ref[i+1])
-			theta, indicator = _get_theta2(traj[i], traj[i+1])
+			a,_ = self._get_av(ref[i-1], ref[i], ref[i+1])
+			theta, indicator = self._get_theta(traj[i], traj[i+1])
 			guide.append([a, theta, indicator])
 		return guide
 		
@@ -431,8 +432,23 @@ class Graph():
 		
 		guide_a, guide_theta, guide_indicator  = self.target.guide[self.target.t]
 		# print("acc theta", acc, theta, guide_a, guide_theta)
+
+		if self.target.t==0:
+			prev_pos = self.target.ref[8]
+		else:
+			prev_pos = np.array([self.target.history[-2][1], self.target.history[-2][2]]) 
+		guide_a, _ = self.target._get_av(prev_pos, np.array(self.target.pos), self.target.ref[10+self.target.t])
+		guide_theta, guide_indicator = self.target._get_theta(np.array(self.target.pos), self.target.ref[10+self.target.t])
+		# print("acc theta", acc, theta, guide_a, guide_theta)
+		
+
 		self.target.a = guide_a+acc
 		self.target.theta=guide_theta+theta
+
+		# if self.target.a >4:
+		# 	self.target.a=4
+		# if self.target.a <-4:
+		# 	self.target.a =-4
 
 
 		distance = self.target.v*0.5+0.5*self.target.a*0.25

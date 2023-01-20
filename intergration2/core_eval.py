@@ -106,35 +106,34 @@ class SceneGenerator():
 	generate a scene
 	"""
 	def __init__(self):
-		self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
-		self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
-		self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
+		# self.pxy= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxy.pickle",'rb'))
+		# self.pxz= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pxz.pickle",'rb'))
+		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_Pyzx.pickle",'rb'))
 
-		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
-		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
-		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
+		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_model.pickle",'rb'))
+		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_model.pickle",'rb'))
+		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_model.pickle",'rb'))
 
-		self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
-		self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
-		self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
+		# self.poolv = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_veh_pool.pickle",'rb'))
+		# self.poolp = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_ped_pool.pickle",'rb'))
+		# self.poolc = pickle.load(open("/home/lab1/repo/planning/saved_gibbs/8kfb_cyc_pool.pickle",'rb'))
 
-		#  lane merge 
-		# self.pxy= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxy_dist.pkl",'rb'))
-		# self.pxz= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxz_dist.pkl",'rb'))
-		# self.pyzx= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pyzx_dist.pkl",'rb'))
+		self.pxy= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxy_dist.pkl",'rb'))
+		self.pxz= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pxz_dist.pkl",'rb'))
+		self.pyzx= pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/Pyzx_dist.pkl",'rb'))
 
-		# self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_model.pkl",'rb'))
-		# self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_model.pkl",'rb'))
-		# self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_model.pkl",'rb'))
+		self.veh_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_model.pkl",'rb'))
+		self.ped_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_model.pkl",'rb'))
+		self.cyc_gmm = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_model.pkl",'rb'))
 
 
 		#remap
-		# vt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
-		# pt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
-		# ct = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_traj_pool.pkl",'rb'))
-		# self.poolv = {0: vt[1], 1:vt[2]}
-		# self.poolp = {0: pt[1], 1:pt[2]}
-		# self.poolc = {1:ct[2]}
+		vt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
+		pt = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
+		ct = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/cyc_traj_pool.pkl",'rb'))
+		self.poolv = {0: vt[1], 1:vt[2]}
+		self.poolp = {0: pt[1], 1:pt[2]}
+		self.poolc = {1:ct[2]}
 
 		# self.poolv = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/veh_traj_pool.pkl",'rb'))
 		# self.poolp = pickle.load(open("/home/lab1/repo/planning/lane_merge_gibbs/ped_traj_pool.pkl",'rb'))
@@ -456,7 +455,6 @@ class Graph():
 	# 	check if crash happens when graph is updated, or hit lane_boundary inside intersection
 	# 	"""
 	# 	return False
-
 	def _get_human_min(self):
 		d_min =float('inf')
 
@@ -474,8 +472,6 @@ class Graph():
 				if d < d_min:
 					d_min = d
 		return d_min
-
-
 
 	def step(self, action):
 		"""

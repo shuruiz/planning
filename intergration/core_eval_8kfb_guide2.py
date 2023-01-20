@@ -162,11 +162,12 @@ class TargetNode():
 		self.pos=self.start
 		self.task=np.array([self.start,self.goal])
 		# print("task",self.task)
-  
+		self.ref=None
 		self.a,self.v = self._get_av(traj[8], traj[9], traj[10])
 		self.theta, _ = self._get_theta(traj[9], traj[10])
-		self.guide = self._get_guide(self.traj)
+		self.guide = self._get_guide_fixv(self.traj)
 		self.t=0
+		
 		
 		self.history=[]
 		self.history.append([self.t, self.pos[0],self.pos[1], self.a, self.theta])
@@ -204,6 +205,99 @@ class TargetNode():
 		guide=[]
 		for i in range(9,19):
 			a,_ = self._get_av(traj[i-1], traj[i], traj[i+1])
+			theta, indicator = self._get_theta(traj[i], traj[i+1])
+			guide.append([a, theta, indicator])
+		return guide
+
+	def _making_feasible_ref(self,traj):
+		ref = list(traj[:10])
+		for i in range(9,19):
+			prev_pos = ref[i]
+			a, v = self._get_av(np.array(ref[i-1]), np.array(ref[i]), traj[i+1])
+			if a>2:
+				a=2
+			if a<-2:
+				a=-2
+			theta, indicator = self._get_theta(np.array(ref[i]), traj[i+1])
+			distance = v*0.5+0.5*a*0.25
+			radian = theta*math.pi/180
+			dx, dy = abs(distance*math.cos(radian)), abs(distance*math.sin(radian))
+				
+			if indicator==1: # zone 1
+				new_pos=[prev_pos[0]+dx, prev_pos[1]+dy]
+			elif indicator==2:
+				new_pos=[prev_pos[0]-dx, prev_pos[1]+dy]
+			elif indicator==3:
+				new_pos = [prev_pos[0]-dx, prev_pos[1]-dy]
+			else:
+				new_pos = [prev_pos[0]+dx, prev_pos[1]-dy]
+			ref.append(new_pos)
+		return np.array(ref)
+
+
+	def _get_guide_fixv(self,traj):
+		ref= list(traj[:10])
+		prev_pos = traj[9]
+		dsum=0
+		for i in range(9,19):
+			dsum+= np.linalg.norm(traj[i] - traj[i+1])
+		v = dsum/5
+	#     v =env2.target.v
+		# print(dsum, v)
+		
+		for i in range(9,19):
+			theta, indicator = self._get_theta(traj[i], traj[i+1])
+			distance = v*0.5
+			radian = theta*math.pi/180
+			dx, dy = abs(distance*math.cos(radian)), abs(distance*math.sin(radian))
+					#update state
+			if indicator==1: # zone 1
+				new_pos=[prev_pos[0]+dx, prev_pos[1]+dy]
+			elif indicator==2:
+				new_pos=[prev_pos[0]-dx, prev_pos[1]+dy]
+			elif indicator==3:
+				new_pos = [prev_pos[0]-dx, prev_pos[1]-dy]
+			else:
+				new_pos = [prev_pos[0]+dx, prev_pos[1]-dy]
+			ref.append(new_pos)
+			prev_pos = new_pos
+		ref = np.array(ref)
+		updated_ref = self._making_feasible_ref(ref)
+		self.ref = updated_ref
+		guide = self._get_guide(updated_ref)
+		return guide
+
+	def _get_guide_constantv(self,traj):
+		ref= list(traj[:10])
+		prev_pos = traj[9]
+		dsum=0
+		for i in range(9,19):
+			dsum+= np.linalg.norm(traj[i] - traj[i+1])
+		v = dsum/5
+	#     v =env2.target.v
+		# print(dsum, v)
+		
+		for i in range(9,19):
+			theta, indicator = self._get_theta(traj[i], traj[i+1])
+			distance = v*0.5
+			radian = theta*math.pi/180
+			dx, dy = abs(distance*math.cos(radian)), abs(distance*math.sin(radian))
+					#update state
+			if indicator==1: # zone 1
+				new_pos=[prev_pos[0]+dx, prev_pos[1]+dy]
+			elif indicator==2:
+				new_pos=[prev_pos[0]-dx, prev_pos[1]+dy]
+			elif indicator==3:
+				new_pos = [prev_pos[0]-dx, prev_pos[1]-dy]
+			else:
+				new_pos = [prev_pos[0]+dx, prev_pos[1]-dy]
+			ref.append(new_pos)
+			prev_pos = new_pos
+		ref = np.array(ref)
+		self.ref=ref
+		guide=[]
+		for i in range(9,19):
+			a,_ = self._get_av(ref[i-1], ref[i], ref[i+1])
 			theta, indicator = self._get_theta(traj[i], traj[i+1])
 			guide.append([a, theta, indicator])
 		return guide
@@ -267,6 +361,10 @@ class Graph():
 		# self.riskmodel=models[3]
 		# self.lane_boundary=lane_boundary
 		self.target_dist_to_others=[]
+
+		self.surpass=False
+		self.diff=0
+		self.acc=False
 		
 		
 		# self.action_dict = list(itertools.product(np.round(np.arange(-0.1,0.15,0.05), decimals=2), np.round(np.arange(-3,4,1), decimals=0))) # delta a, delta theta
@@ -485,8 +583,35 @@ class Graph():
 		acc, theta = self.action_dict[action]
 		
 		guide_a, guide_theta, guide_indicator  = self.target.guide[self.target.t]
-		# print("acc theta", acc, theta, guide_a, guide_theta)
+		# print("old ref",guide_a, guide_theta, guide_indicator)
+		# if self.target.t<=0:
+		# 	prev_pos = self.target.ref[8]
+		# else:
+		# 	prev_pos = np.array([self.target.history[-2][1], self.target.history[-2][2]]) 
+		# guide_a, _ = self.target._get_av(prev_pos, np.array(self.target.pos), self.target.ref[10+self.target.t])
+		# guide_theta, guide_indicator = self.target._get_theta(np.array(self.target.pos), self.target.ref[10+self.target.t])
+		# print("acc theta", acc, theta, guide_a, guide_theta, guide_indicator)
+		# print("prev,curr, target",prev_pos, np.array(self.target.pos), self.target.ref[10+self.target.t])
+		# print('*************')
 		self.target.a = guide_a+acc
+		# for target a >4 exceed maximum, put its accelertion into arithmetic progression and the last position got a=0
+		# if self.target.a >7:
+		# 	self.target.a=7
+		# if self.target.a <-7:
+		# 	self.target.a =-7
+
+		# if self.surpass is True:
+		# 	self.target.a += self.diff 
+		# if self.target.a>3:
+		# 	self.diff = self.target.a -3
+		# 	self.target.a=3
+		# 	self.surpass = True
+		# if self.target.a < -3:
+		# 	self.diff= self.target.a+3
+		# 	self.target.a = -3
+		# 	self.surpass = True
+		# if -3< self.target.a<3:
+		# 	self.surpass = False
 		self.target.theta=guide_theta+theta
 
 
@@ -561,7 +686,7 @@ class Graph():
 		# r = math.exp(-0.02*c_e) * math.exp(-0.1*c_j) * (1000/c_d)**2  # math.exp(-0.1*self.target.t) # may be discounted by time, stressor and jerkiness, boosted by distance to goal
 		# print("cost c",c_e, c_d, c_j, r, self.target.a, self.target.theta, self.target.pos, self.target.goal, self.target.start, self.target.t)
 		# print("and", -0.2*c_e, -0.1*c_j, self.target.v , math.exp(-0.2*c_e) , math.exp(-1*c_j) )
-		if min(self.target_dist_to_others)<1:
+		if min(self.target_dist_to_others)<0.5:
 			return 0, 'crash' 
 		# elif collision.check([self.target.history[-2][1], self.target.history[-2][2]],self.target.pos):
 		# 	return -9999999, 'crash' 
